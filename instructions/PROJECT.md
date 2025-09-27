@@ -71,10 +71,10 @@ scripts/build-report.sh html reports/report.md
 # PDFレポート生成（配布用）
 scripts/build-report.sh pdf reports/report.md [出力名]
 
-# 引用整合性チェック
+# 引用整合性チェック（URL必須化・相互参照チェック含む）
 scripts/check-references.sh reports/report.md
 
-# URL有効性も含むチェック
+# URL有効性も含むチェック（推奨）
 scripts/check-references.sh reports/report.md --check-urls
 ```
 

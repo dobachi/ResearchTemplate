@@ -23,6 +23,8 @@ show_usage() {
   - 引用番号の連続性
   - 参考文献リストとの対応
   - 未使用の参考文献
+  - 参考文献のURL必須チェック
+  - 相互参照の充実度
   - URLの有効性（オプション）
 
 例:
@@ -87,6 +89,23 @@ fi
 echo -e "${GREEN}参考文献をチェック中...${NC}"
 REFERENCES=$(grep '^\[\^[0-9]\+\]:' "$REPORT_FILE" | sed 's/^\[\^\([0-9]\+\)\]:.*/\1/' | sort -nu)
 
+# URL必須チェック
+echo -e "${GREEN}参考文献のURL必須チェック中...${NC}"
+REFERENCES_WITHOUT_URL=()
+while IFS= read -r line; do
+    if [[ $line =~ ^\[\^[0-9]+\]: ]]; then
+        # URLパターンをチェック（http/https）
+        if ! echo "$line" | grep -q 'https\?://'; then
+            REF_NUM=$(echo "$line" | sed 's/^\[\^\([0-9]\+\)\]:.*/\1/')
+            REFERENCES_WITHOUT_URL+=($REF_NUM)
+        fi
+    fi
+done < "$REPORT_FILE"
+
+if [ ${#REFERENCES_WITHOUT_URL[@]} -gt 0 ]; then
+    echo -e "${RED}  エラー: URLが記載されていない参考文献: ${REFERENCES_WITHOUT_URL[*]}${NC}"
+fi
+
 if [ -n "$REFERENCES" ]; then
     TOTAL_REFERENCES=$(echo "$REFERENCES" | wc -l)
     echo "  発見した参考文献数: $TOTAL_REFERENCES"
@@ -116,6 +135,19 @@ done
 
 if [ ${#MISSING_REFS[@]} -gt 0 ]; then
     echo -e "${RED}  エラー: 参考文献が定義されていない引用: ${MISSING_REFS[*]}${NC}"
+fi
+
+# 相互参照チェック
+echo -e "${GREEN}相互参照をチェック中...${NC}"
+SECTION_REFS=$(grep -n '第[0-9]\+章\|第[0-9]\+節\|図[0-9]\+\|表[0-9]\+\|付録[A-Z]\+' "$REPORT_FILE" | wc -l)
+CROSS_REFS=$(grep -n '\[.*参照\]\|\[.*章.*\]\|\[.*図.*\]\|\[.*表.*\]' "$REPORT_FILE" | wc -l)
+
+echo "  発見したセクション・図表: $SECTION_REFS個"
+echo "  発見した相互参照: $CROSS_REFS個"
+
+# 相互参照推奨チェック（セクションに対する参照が少ない場合）
+if [ $SECTION_REFS -gt 3 ] && [ $CROSS_REFS -lt $((SECTION_REFS / 3)) ]; then
+    echo -e "${YELLOW}  推奨: セクション間の相互参照を増やすことで読みやすさが向上します${NC}"
 fi
 
 # URLチェック（オプション）
@@ -155,6 +187,14 @@ if [ ${#MISSING_REFS[@]} -gt 0 ]; then
     echo -e "${RED}エラー:${NC}"
     echo "  - 参考文献が未定義の引用: ${#MISSING_REFS[@]}件"
     ERROR_COUNT=$((ERROR_COUNT + ${#MISSING_REFS[@]}))
+fi
+
+if [ ${#REFERENCES_WITHOUT_URL[@]} -gt 0 ]; then
+    if [ $ERROR_COUNT -eq 0 ]; then
+        echo -e "${RED}エラー:${NC}"
+    fi
+    echo "  - URLが記載されていない参考文献: ${#REFERENCES_WITHOUT_URL[@]}件"
+    ERROR_COUNT=$((ERROR_COUNT + ${#REFERENCES_WITHOUT_URL[@]}))
 fi
 
 if [ ${#MISSING_CITATIONS[@]} -gt 0 ] || [ ${#UNUSED_REFERENCES[@]} -gt 0 ] || [ ${#BROKEN_URLS[@]} -gt 0 ]; then
