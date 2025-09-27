@@ -1,0 +1,98 @@
+# AI指示書（サブモジュール）
+instructions/ai_instruction_kits/
+
+# AIツール設定
+.openhands/
+.claude/
+
+# Git worktree directories
+.gitworktrees/
+gitworktrees/
+
+# 出力ファイル
+output/
+*.html
+*.pdf
+
+# 一時ファイル
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ログファイル
+*.log
+checkpoint.log
+
+# IDE設定
+.vscode/
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.env
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# 作業ディレクトリ
+work/
+draft/
+
+# 個人メモ
+personal/
+private/
+*.private.*
+
+# バックアップ
+*.bak
+*.backup
+*.old
+
+# LaTeX中間ファイル（PDF生成用）
+*.aux
+*.lof
+*.lot
+*.fls
+*.out
+*.toc
+*.fmt
+*.fot
+*.cb
+*.cb2
+.*.lb
+
+# 機密情報
+secrets/
+credentials/
+*.key
+*.pem
+*.crt
+
+# プロジェクト固有の除外
+/sources/data/*.csv
+/sources/data/*.xlsx
+/sources/data/*.json
+!sources/data/.gitkeep
+
+# キャッシュ
+.cache/
+*.cache

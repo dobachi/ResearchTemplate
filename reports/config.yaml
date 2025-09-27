@@ -1,0 +1,154 @@
+# 調査報告書設定ファイル
+
+# 報告書の基本情報
+report:
+  title: "[調査報告書のタイトル]"
+  subtitle: "[サブタイトル（オプション）]"
+  version: "1.0"
+  date: "YYYY-MM-DD"
+  language: "ja"  # ja: 日本語, en: 英語
+
+# 調査テーマと範囲
+research:
+  topic: "[主要な調査テーマ]"
+  scope:
+    - "IT技術"
+    - "法制度・規制"
+    - "ソフトウェアプロジェクト"
+    # 必要に応じて追加
+
+  period:
+    start: "YYYY-MM-DD"
+    end: "YYYY-MM-DD"
+
+  objectives:
+    - "[調査目的1]"
+    - "[調査目的2]"
+    - "[調査目的3]"
+
+# 作成者情報
+authors:
+  primary:
+    name: "[主執筆者名]"
+    organization: "[所属組織]"
+    email: "[連絡先メール]"
+
+  contributors:
+    - name: "[協力者1]"
+      role: "データ分析"
+    - name: "[協力者2]"
+      role: "レビュー"
+
+# 出力設定
+output:
+  formats:
+    - markdown  # 基本形式
+    - html      # Webブラウザ表示用
+    - pdf       # 印刷・配布用
+
+  html:
+    template: "templates/report-template.html"
+    css: "templates/styles/report-style.css"
+    toc: true  # 目次の自動生成
+    toc_depth: 3  # 目次の深さ
+
+  pdf:
+    paper_size: "A4"
+    margin: "2cm"
+    font_size: "10pt"
+    header: true
+    footer: true
+    page_numbers: true
+
+# 品質管理設定
+quality:
+  # 引用管理
+  citation:
+    style: "apa"  # APA, MLA, Chicago, IEEE など
+    min_sources: 10  # 最小参考文献数
+    require_doi: false  # DOIの必須化
+
+  # 信頼性基準
+  reliability:
+    prefer_sources:
+      - "government"     # 政府・行政機関
+      - "academic"       # 学術論文
+      - "standards"      # 標準化団体
+      - "official"       # 企業公式文書
+
+    avoid_sources:
+      - "wikipedia"      # 一次情報源として避ける
+      - "blog"          # 個人ブログ
+      - "social_media"  # SNS投稿
+
+  # レビュープロセス
+  review:
+    required: true
+    min_reviewers: 2
+    checklist:
+      - "事実の正確性"
+      - "引用の適切性"
+      - "論理的一貫性"
+      - "読みやすさ"
+
+# テンプレート設定
+templates:
+  report: "templates/report_template.md"
+  executive_summary: "templates/executive_summary.md"
+  bibliography: "templates/bibliography.md"
+
+# 調査分野別の設定
+domains:
+  it_technology:
+    sources:
+      - "IEEE Xplore"
+      - "ACM Digital Library"
+      - "arXiv"
+      - "GitHub"
+    keywords:
+      - "最新技術動向"
+      - "セキュリティ"
+      - "アーキテクチャ"
+
+  legal_regulatory:
+    sources:
+      - "官報"
+      - "政府ポータル"
+      - "法令データベース"
+    keywords:
+      - "法規制"
+      - "コンプライアンス"
+      - "ガイドライン"
+
+  software_projects:
+    sources:
+      - "GitHub"
+      - "GitLab"
+      - "プロジェクト公式サイト"
+    keywords:
+      - "実装"
+      - "アーキテクチャ"
+      - "ベストプラクティス"
+
+# 自動化設定
+automation:
+  # 参考文献の自動フォーマット
+  auto_format_references: true
+
+  # 引用のチェック
+  check_citations: true
+
+  # 目次の自動生成
+  auto_generate_toc: true
+
+  # 用語集の自動生成
+  auto_generate_glossary: false
+
+# プラグイン設定（将来の拡張用）
+plugins:
+  - name: "citation-checker"
+    enabled: true
+  - name: "fact-verifier"
+    enabled: false
+  - name: "translation"
+    enabled: false
