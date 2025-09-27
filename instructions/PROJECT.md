@@ -63,16 +63,34 @@ AI指示書システムを活用して、信頼性の高い調査報告書を効
 
 ## ビルドコマンド
 
+### 報告書生成コマンド（必須）
 ```bash
-# HTMLレポート生成
+# HTMLレポート生成（プレビュー用）
 scripts/build-report.sh html reports/report.md
 
-# PDFレポート生成（要: pandoc, wkhtmltopdf）
-scripts/build-report.sh pdf reports/report.md
+# PDFレポート生成（配布用）
+scripts/build-report.sh pdf reports/report.md [出力名]
 
-# 引用チェック
+# 引用整合性チェック
 scripts/check-references.sh reports/report.md
+
+# URL有効性も含むチェック
+scripts/check-references.sh reports/report.md --check-urls
 ```
+
+### AIによる自動活用指示
+調査報告書作成タスクでは、以下のスクリプトを必ず活用してください：
+
+1. **執筆段階**: 定期的に`check-references.sh`で引用の整合性を確認
+2. **中間レビュー**: `build-report.sh html`でプレビュー版を生成
+3. **最終確認**: `--check-urls`オプションでオンライン資料の有効性確認
+4. **配布準備**: `build-report.sh pdf`で最終版PDF生成
+
+### 品質チェック自動化
+- 引用番号の連続性確認
+- 参考文献との対応チェック
+- 未使用参考文献の検出
+- リンク切れの自動検出
 
 ## プロジェクト固有の追加指示
 
