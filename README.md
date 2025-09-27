@@ -12,11 +12,33 @@ AI支援による調査報告書作成のためのGitHubテンプレートリポ
 
 ## クイックスタート
 
-### 1. テンプレートからリポジトリを作成
+### 🚀 ワンライナーで新しいプロジェクトを作成（推奨）
+
+以下のワンライナーを実行すると、GitHubプライベートリポジトリ付きの新しいプロジェクトが自動作成されます：
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/dobachi/ResearchTemplate/main/scripts/create-project.sh) your-project-name
+```
+
+**前提条件:**
+- [GitHub CLI (gh)](https://cli.github.com/) がインストール済み
+- GitHub CLI が認証済み (`gh auth login`)
+
+**このワンライナーが実行する処理:**
+1. ✅ 新しいプロジェクトディレクトリを作成
+2. ✅ このテンプレートを複製
+3. ✅ GitHubにプライベートリポジトリを作成
+4. ✅ 新しいリポジトリにプッシュ
+5. ✅ AI指示書システム（サブモジュール）を初期化
+6. ✅ プロジェクト設定を自動更新
+
+### 手動での作成方法
+
+#### 1. テンプレートからリポジトリを作成
 
 GitHubで「Use this template」ボタンをクリックして、新しいリポジトリを作成します。
 
-### 2. 初期設定
+#### 2. 初期設定
 
 ```bash
 # リポジトリをクローン
@@ -28,6 +50,18 @@ git submodule update --init --recursive
 
 # プロジェクト設定の確認
 cat instructions/PROJECT.md
+```
+
+### 調査開始
+
+プロジェクト作成後、以下のように調査を開始できます：
+
+```bash
+# プロジェクトディレクトリに移動
+cd your-project-name
+
+# 調査テーマの設定（次のセクション参照）
+# その後、AI支援による調査開始（さらに次のセクション参照）
 ```
 
 ### 3. 調査テーマの設定
