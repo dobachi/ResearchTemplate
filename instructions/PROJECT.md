@@ -74,7 +74,12 @@ scripts/build-quarto.sh --format html    # HTML形式のみ
 scripts/build-quarto.sh --format pdf     # PDF形式のみ
 scripts/build-quarto.sh --preview        # ライブプレビュー起動
 
-# 🔄 自動ビルド（ファイル監視）
+# 🔄 統合開発環境（推奨）
+scripts/dev-server.sh                     # プレビュー + 自動ビルド統合
+scripts/dev-server.sh --port 4000         # カスタムポート
+scripts/dev-server.sh --no-auto-build    # プレビューのみ
+
+# 🔄 自動ビルド（単独）
 scripts/auto-build-quarto.sh             # 自動ビルド開始
 scripts/auto-build-quarto.sh --format html # HTML自動ビルド
 
@@ -107,8 +112,8 @@ scripts/check-references.sh reports/report.qmd --check-urls
    - プロジェクト設定と依存関係を自動解決
 
 2. **✏️ 執筆段階**:
-   - `quarto preview`でライブプレビュー環境を開始
-   - `scripts/auto-build-quarto.sh`で自動ビルド監視
+   - `scripts/dev-server.sh`で統合開発環境を開始（推奨）
+   - または個別に`quarto preview` + `scripts/auto-build-quarto.sh`
    - `.qmd`ファイルで執筆（自動相互参照・引用管理）
 
 3. **🔍 品質管理**:
