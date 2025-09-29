@@ -138,11 +138,25 @@ automation:
   # 引用のチェック
   check_citations: true
 
+  # URL必須チェック
+  require_urls: true
+
+  # 相互参照の推奨
+  recommend_cross_references: true
+
   # 目次の自動生成
   auto_generate_toc: true
 
   # 用語集の自動生成
   auto_generate_glossary: false
+
+  # ファイル監視による自動ビルド
+  auto_build:
+    enabled: false  # 手動で scripts/auto-build.sh を実行
+    watch_patterns:
+      - "*.md"
+      - "config.yaml"
+    debounce_seconds: 2  # ファイル変更後のビルド遅延
 
 # プラグイン設定（将来の拡張用）
 plugins:

@@ -1,0 +1,286 @@
+name: Build Quarto Research Reports
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'reports/**/*.qmd'
+      - 'reports/**/*.md'
+      - '_quarto.yml'
+      - 'sources/references/**'
+      - 'reports/templates/styles/**'
+      - 'scripts/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'reports/**/*.qmd'
+      - 'reports/**/*.md'
+      - '_quarto.yml'
+      - 'sources/references/**'
+      - 'reports/templates/styles/**'
+  # 手動実行を許可
+  workflow_dispatch:
+    inputs:
+      build_format:
+        description: 'Build format (html, pdf, all)'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+        - html
+        - pdf
+        - all
+      quarto_version:
+        description: 'Quarto version'
+        required: false
+        default: 'latest'
+        type: string
+
+jobs:
+  setup-and-check:
+    name: Setup and Quality Check
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Quarto
+      uses: quarto-dev/quarto-actions/setup@v2
+      with:
+        version: ${{ inputs.quarto_version || 'latest' }}
+
+    - name: Setup additional dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wkhtmltopdf curl
+
+    - name: Verify Quarto installation
+      run: |
+        quarto --version
+        quarto check
+
+    - name: Check project structure
+      run: |
+        # _quarto.yml の確認
+        if [ ! -f "_quarto.yml" ]; then
+          echo "Setting up Quarto project..."
+          scripts/setup-quarto.sh
+        fi
+
+        # プロジェクト構造の確認
+        quarto check
+
+    - name: Validate Quarto files
+      run: |
+        # .qmd ファイルの構文チェック
+        find reports/ -name "*.qmd" -type f | while read file; do
+          echo "Validating: $file"
+          quarto render "$file" --to html --execute-dir . --quiet || {
+            echo "Error in file: $file"
+            exit 1
+          }
+        done
+
+  build-html:
+    name: Build HTML Reports
+    runs-on: ubuntu-latest
+    needs: setup-and-check
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Quarto
+      uses: quarto-dev/quarto-actions/setup@v2
+      with:
+        version: ${{ inputs.quarto_version || 'latest' }}
+
+    - name: Setup project
+      run: |
+        # 必要に応じてプロジェクトセットアップ
+        if [ ! -f "_quarto.yml" ]; then
+          scripts/setup-quarto.sh
+        fi
+
+    - name: Build HTML reports
+      run: |
+        # HTMLフォーマットでレンダリング
+        if [ "${{ inputs.build_format }}" = "html" ] || [ "${{ inputs.build_format }}" = "all" ] || [ -z "${{ inputs.build_format }}" ]; then
+          echo "Building HTML reports..."
+          quarto render --to html
+        fi
+
+    - name: Upload HTML artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: html-reports
+        path: |
+          _site/
+          output/
+        retention-days: 30
+
+  build-pdf:
+    name: Build PDF Reports
+    runs-on: ubuntu-latest
+    needs: setup-and-check
+    if: |
+      (inputs.build_format == 'pdf' || inputs.build_format == 'all' || inputs.build_format == null) &&
+      (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'build-pdf'))
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Quarto
+      uses: quarto-dev/quarto-actions/setup@v2
+      with:
+        version: ${{ inputs.quarto_version || 'latest' }}
+
+    - name: Setup LaTeX and PDF dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          texlive-latex-base \
+          texlive-fonts-recommended \
+          texlive-fonts-extra \
+          texlive-latex-extra \
+          texlive-xetex \
+          fonts-noto-cjk \
+          wkhtmltopdf
+
+    - name: Setup project
+      run: |
+        if [ ! -f "_quarto.yml" ]; then
+          scripts/setup-quarto.sh
+        fi
+
+    - name: Build PDF reports
+      run: |
+        # PDFフォーマットでレンダリング
+        if [ "${{ inputs.build_format }}" = "pdf" ] || [ "${{ inputs.build_format }}" = "all" ] || [ -z "${{ inputs.build_format }}" ]; then
+          echo "Building PDF reports..."
+          quarto render --to pdf
+        fi
+
+    - name: Upload PDF artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: pdf-reports
+        path: |
+          _site/**/*.pdf
+          output/**/*.pdf
+        retention-days: 30
+
+  deploy-reports:
+    name: Deploy Reports to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [build-html, build-pdf]
+    if: |
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push'
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Quarto
+      uses: quarto-dev/quarto-actions/setup@v2
+
+    - name: Setup project and render
+      run: |
+        if [ ! -f "_quarto.yml" ]; then
+          scripts/setup-quarto.sh
+        fi
+        quarto render
+
+    - name: Deploy to GitHub Pages
+      uses: quarto-dev/quarto-actions/publish@v2
+      with:
+        target: gh-pages
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build-html, build-pdf]
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Download HTML artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: html-reports
+        path: release/html/
+
+    - name: Download PDF artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: pdf-reports
+        path: release/pdf/
+      continue-on-error: true
+
+    - name: Create release archive
+      run: |
+        # HTMLレポートの圧縮
+        cd release/html
+        zip -r "../../research-reports-html-${GITHUB_REF#refs/tags/}.zip" .
+        cd ../..
+
+        # PDFレポートの圧縮（存在する場合）
+        if [ -d "release/pdf" ]; then
+          cd release/pdf
+          zip -r "../../research-reports-pdf-${GITHUB_REF#refs/tags/}.zip" .
+          cd ../..
+        fi
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          research-reports-*.zip
+        body: |
+          ## 調査報告書リリース
+
+          このリリースには以下が含まれています：
+          - 📄 HTML形式の報告書（Webブラウザ表示用）
+          - 📋 PDF形式の報告書（印刷・配布用）
+
+          ### 生成システム
+          - **Quarto**: 次世代科学技術出版システム
+          - **自動ビルド**: GitHub Actions による自動生成
+          - **品質管理**: 統合された参考文献・引用チェック
+
+          生成日時: ${{ github.event.head_commit.timestamp }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify-completion:
+    name: Notify Build Completion
+    runs-on: ubuntu-latest
+    needs: [setup-and-check, build-html, build-pdf]
+    if: always()
+
+    steps:
+    - name: Check job results
+      run: |
+        echo "Setup and Check: ${{ needs.setup-and-check.result }}"
+        echo "HTML Build: ${{ needs.build-html.result }}"
+        echo "PDF Build: ${{ needs.build-pdf.result }}"
+
+        if [[ "${{ needs.setup-and-check.result }}" == "failure" ]]; then
+          echo "::error::Setup or quality check failed"
+          exit 1
+        fi
+
+        if [[ "${{ needs.build-html.result }}" == "failure" || "${{ needs.build-pdf.result }}" == "failure" ]]; then
+          echo "::warning::Some builds failed"
+        fi
+
+        echo "::notice::Quarto build process completed successfully"

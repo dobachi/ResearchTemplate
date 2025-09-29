@@ -8,6 +8,8 @@ AI支援による調査報告書作成のためのGitHubテンプレートリポ
 - 📊 構造化された報告書テンプレート（エグゼクティブサマリ、参考文献を含む）
 - 🔍 信頼性の高い情報源の活用と適切な引用管理
 - 📝 HTML/PDF形式での報告書出力対応
+- 🔄 ファイル監視による自動ビルド・継続的インテグレーション
+- ⚡ **Quarto統合**: 次世代科学技術出版システムによる高速・美しいレポート生成
 - 🎯 IT技術、法制度、ソフトウェアプロジェクト等の調査に最適化
 
 ## クイックスタート
@@ -111,6 +113,9 @@ scripts/checkpoint.sh start "調査タスク名" 5
 │   ├── checkpoint.sh          # 進捗管理
 │   ├── commit.sh             # クリーンなコミット
 │   ├── build-report.sh       # 報告書ビルド
+│   ├── auto-build.sh         # 自動ビルド（ファイル監視）
+│   ├── ci-build.sh           # CI/CD用ビルド
+│   ├── check-references.sh   # 参考文献チェック
 │   └── worktree-manager.sh   # Git worktree管理
 └── output/                    # 生成された報告書（gitignore対象）
     ├── html/
@@ -147,19 +152,73 @@ scripts/checkpoint.sh start "調査タスク名" 5
 - 結論
 - 参考文献一覧
 
-## 報告書のビルドとエクスポート
+## 📊 Quarto統合ビルドシステム
 
-### HTMLレポートの生成
-
-```bash
-scripts/build-report.sh html reports/your-report.md
-```
-
-### PDFレポートの生成
+### 🚀 初回セットアップ
 
 ```bash
-scripts/build-report.sh pdf reports/your-report.md
+# Quartoのインストールとプロジェクト設定
+scripts/setup-quarto.sh
+
+# 動作確認
+scripts/build-quarto.sh --check
 ```
+
+### ⚡ 基本ビルド
+
+```bash
+# 🔨 統合ビルド（HTML + PDF同時生成）
+scripts/build-quarto.sh
+
+# 特定形式のみ
+scripts/build-quarto.sh --format html     # HTML形式のみ
+scripts/build-quarto.sh --format pdf      # PDF形式のみ
+
+# 📱 ライブプレビュー（リアルタイム更新）
+scripts/build-quarto.sh --preview
+# または直接
+quarto preview
+```
+
+### 🔄 自動ビルド（ファイル監視）
+
+```bash
+# 自動ビルド開始（.qmdファイル監視）
+scripts/auto-build-quarto.sh
+
+# HTML形式のみ自動ビルド
+scripts/auto-build-quarto.sh --format html
+
+# 推奨: プレビューと併用
+# ターミナル1: quarto preview
+# ターミナル2: scripts/auto-build-quarto.sh
+```
+
+### 📋 参考文献チェック（継続利用）
+
+```bash
+# 引用整合性チェック（URL必須化対応）
+scripts/check-references.sh reports/your-report.qmd
+
+# URL有効性チェック
+scripts/check-references.sh reports/your-report.qmd --check-urls
+```
+
+### 🚀 GitHub Actionsによる自動化（Quarto版）
+
+プッシュ時に自動実行：
+- **Quarto品質チェック**: 構文検証と相互参照確認
+- **マルチフォーマット生成**: HTML/PDF同時ビルド
+- **GitHub Pages自動デプロイ**: Quartoネイティブ対応
+- **アーティファクト管理**: 美しいレポートファイル保存
+
+### 💡 Quartoシステムの特徴
+
+- **統合管理**: _quarto.yml による一元設定
+- **自動相互参照**: @fig-chart, @tbl-data でリンク自動生成
+- **完全引用管理**: .bib ファイルと自動連携
+- **美しいテーマ**: プロフェッショナルなデフォルトスタイル
+- **リアルタイムプレビュー**: ライブ更新対応
 
 ## AI指示書の活用
 

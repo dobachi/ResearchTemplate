@@ -63,28 +63,61 @@ AI指示書システムを活用して、信頼性の高い調査報告書を効
 
 ## ビルドコマンド
 
-### 報告書生成コマンド（必須）
+### 🚀 Quarto統合ビルドシステム（推奨）
 ```bash
-# HTMLレポート生成（プレビュー用）
-scripts/build-report.sh html reports/report.md
+# 📦 初回セットアップ
+scripts/setup-quarto.sh                  # Quartoインストール＋プロジェクト設定
 
-# PDFレポート生成（配布用）
-scripts/build-report.sh pdf reports/report.md [出力名]
+# 🔨 基本ビルド（従来の複数スクリプトを1つに統合）
+scripts/build-quarto.sh                  # 全形式ビルド
+scripts/build-quarto.sh --format html    # HTML形式のみ
+scripts/build-quarto.sh --format pdf     # PDF形式のみ
+scripts/build-quarto.sh --preview        # ライブプレビュー起動
 
-# 引用整合性チェック（URL必須化・相互参照チェック含む）
-scripts/check-references.sh reports/report.md
+# 🔄 自動ビルド（ファイル監視）
+scripts/auto-build-quarto.sh             # 自動ビルド開始
+scripts/auto-build-quarto.sh --format html # HTML自動ビルド
 
-# URL有効性も含むチェック（推奨）
-scripts/check-references.sh reports/report.md --check-urls
+# ⚡ 直接Quartoコマンド（最もシンプル）
+quarto render                             # プロジェクト全体をビルド
+quarto render reports/report.qmd          # 特定ファイルをビルド
+quarto preview                            # ライブプレビュー開始
 ```
 
-### AIによる自動活用指示
-調査報告書作成タスクでは、以下のスクリプトを必ず活用してください：
+### 📋 参考文献チェック（引き続き利用可能）
+```bash
+# 引用整合性チェック（URL必須化・相互参照チェック含む）
+scripts/check-references.sh reports/report.qmd
 
-1. **執筆段階**: 定期的に`check-references.sh`で引用の整合性を確認
-2. **中間レビュー**: `build-report.sh html`でプレビュー版を生成
-3. **最終確認**: `--check-urls`オプションでオンライン資料の有効性確認
-4. **配布準備**: `build-report.sh pdf`で最終版PDF生成
+# URL有効性も含むチェック（推奨）
+scripts/check-references.sh reports/report.qmd --check-urls
+```
+
+### 💡 Quartoの利点
+- **簡素化**: 統合されたコマンドライン操作
+- **自動化**: 相互参照、目次生成、引用管理が自動
+- **美しさ**: プロフェッショナルなデフォルトテーマ
+- **速度**: 高速なビルド処理
+
+### 🤖 AIによる自動活用指示（Quarto版）
+調査報告書作成タスクでは、以下の**Quartoワークフロー**を活用してください：
+
+1. **🔧 初期設定**:
+   - `scripts/setup-quarto.sh`でQuarto環境を構築
+   - プロジェクト設定と依存関係を自動解決
+
+2. **✏️ 執筆段階**:
+   - `quarto preview`でライブプレビュー環境を開始
+   - `scripts/auto-build-quarto.sh`で自動ビルド監視
+   - `.qmd`ファイルで執筆（自動相互参照・引用管理）
+
+3. **🔍 品質管理**:
+   - `scripts/check-references.sh`で引用の整合性確認
+   - Quartoビルトイン機能で相互参照の自動検証
+
+4. **📊 中間レビュー**: `quarto render --to html`で高品質プレビュー
+5. **📋 最終出力**: `quarto render`で HTML/PDF同時生成
+6. **🚀 CI/CD**: GitHub ActionsでQuarto自動ビルド・デプロイ
 
 ### 品質チェック自動化
 - 引用番号の連続性確認
