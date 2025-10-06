@@ -3,6 +3,8 @@
  * Quartoテーマの拡張
  */
 
+/*-- scss:defaults --*/
+
 // 日本語フォント設定
 $font-family-sans-serif: "Noto Sans CJK JP", "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif !default;
 $font-family-monospace: "Ricty Diminished", "Source Code Pro", "Courier New", monospace !default;
@@ -14,6 +16,8 @@ $accent-color: #f57c00;       // オレンジ（注意喚起）
 $warning-color: #f44336;      // 赤（警告）
 $info-color: #0288d1;         // 水色（情報）
 $success-color: #388e3c;      // 緑（成功）
+
+/*-- scss:rules --*/
 
 // タイポグラフィ
 .title {
