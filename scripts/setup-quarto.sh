@@ -247,7 +247,6 @@ book:
 
   chapters:
     - index.qmd
-    - reports/*.qmd
 
   sidebar:
     title: "調査報告書"
