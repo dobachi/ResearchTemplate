@@ -232,13 +232,24 @@ jobs:
     - name: Setup Quarto
       uses: quarto-dev/quarto-actions/setup@v2
 
+    - name: Setup LaTeX and PDF dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          texlive-latex-base \
+          texlive-fonts-recommended \
+          texlive-fonts-extra \
+          texlive-latex-extra \
+          texlive-xetex \
+          fonts-noto-cjk \
+          wkhtmltopdf
+
     - name: Setup project and render
       run: |
         if [ ! -f "_quarto.yml" ]; then
           scripts/setup-quarto.sh
         fi
-        # GitHub PagesにはHTMLのみデプロイ
-        quarto render --to html
+        quarto render
 
     - name: Deploy to GitHub Pages
       uses: quarto-dev/quarto-actions/publish@v2
