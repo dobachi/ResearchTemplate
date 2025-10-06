@@ -149,10 +149,10 @@ jobs:
         # パッケージマネージャーを検出
         if command -v apt-get >/dev/null 2>&1; then
           apt-get update
-          apt-get install -y curl wget gdebi-core fonts-noto-cjk fonts-noto-cjk-extra
+          apt-get install -y curl wget gdebi-core fonts-noto-cjk fonts-noto-cjk-extra gh
         elif command -v apk >/dev/null 2>&1; then
           apk update
-          apk add --no-cache curl wget bash font-noto-cjk
+          apk add --no-cache curl wget bash font-noto-cjk github-cli
         fi
 
     - name: Setup Quarto
@@ -251,10 +251,10 @@ jobs:
         # パッケージマネージャーを検出
         if command -v apt-get >/dev/null 2>&1; then
           apt-get update
-          apt-get install -y curl wget gdebi-core fonts-noto-cjk fonts-noto-cjk-extra
+          apt-get install -y curl wget gdebi-core fonts-noto-cjk fonts-noto-cjk-extra gh
         elif command -v apk >/dev/null 2>&1; then
           apk update
-          apk add --no-cache curl wget bash font-noto-cjk
+          apk add --no-cache curl wget bash font-noto-cjk github-cli
         fi
 
     - name: Setup Quarto
