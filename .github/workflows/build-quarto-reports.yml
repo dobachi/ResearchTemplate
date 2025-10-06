@@ -237,7 +237,8 @@ jobs:
         if [ ! -f "_quarto.yml" ]; then
           scripts/setup-quarto.sh
         fi
-        quarto render
+        # GitHub PagesにはHTMLのみデプロイ
+        quarto render --to html
 
     - name: Deploy to GitHub Pages
       uses: quarto-dev/quarto-actions/publish@v2
