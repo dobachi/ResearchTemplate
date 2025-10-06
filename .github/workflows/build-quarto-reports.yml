@@ -146,15 +146,15 @@ jobs:
 
     - name: Install Quarto dependencies
       run: |
-        apt-get update
-        apt-get install -y curl wget gdebi-core
+        /usr/bin/apt-get update
+        /usr/bin/apt-get install -y curl wget gdebi-core
 
     - name: Setup Quarto
       uses: quarto-dev/quarto-actions/setup@v2
 
     - name: Install Japanese fonts
       run: |
-        apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
+        /usr/bin/apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
 
     - name: Setup project
       run: |
@@ -236,21 +236,25 @@ jobs:
       image: ghcr.io/xu-cheng/texlive-full:latest
       options: --user root
 
+    defaults:
+      run:
+        shell: bash
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
     - name: Install Quarto dependencies
       run: |
-        apt-get update
-        apt-get install -y curl wget gdebi-core
+        /usr/bin/apt-get update
+        /usr/bin/apt-get install -y curl wget gdebi-core
 
     - name: Setup Quarto
       uses: quarto-dev/quarto-actions/setup@v2
 
     - name: Install Japanese fonts
       run: |
-        apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
+        /usr/bin/apt-get install -y fonts-noto-cjk fonts-noto-cjk-extra
 
     - name: Setup project and render
       run: |
