@@ -171,19 +171,23 @@ report:
 
 ### 技術動向分析
 
-```{mermaid}
-flowchart TD
-    A[現状技術] --> B[新技術導入]
-    B --> C[市場への影響]
-    C --> D[将来予測]
-
-    B --> E[課題と障壁]
-    E --> F[解決策の検討]
-```
-
-: 技術導入のフローチャート {#fig-tech-flow}
+![技術導入のフローチャート](../../sources/diagrams/generated/sample-flow.svg){#fig-tech-flow}
 
 @fig-tech-flow に示すように、技術導入には段階的なプロセスが必要です。
+
+:::{.callout-note}
+## 図表作成方法
+
+このフローチャートは以下のコマンドで生成されました：
+```bash
+scripts/generate-diagrams.sh mermaid sources/diagrams/mermaid/sample-flow.mmd
+```
+
+生成されたSVGファイルはInkscapeで高品質編集が可能です：
+```bash
+scripts/generate-diagrams.sh mermaid sample-flow.mmd --inkscape
+```
+:::
 
 # 分析と考察
 
