@@ -72,14 +72,19 @@ jobs:
 
     - name: Validate Quarto files
       run: |
-        # .qmd ファイルの構文チェック
-        find reports/ -name "*.qmd" -type f | while read file; do
+        # .qmd ファイルの構文チェック（テンプレートを除外）
+        find reports/ -name "*.qmd" -type f -not -path "*/templates/*" | while read file; do
           echo "Validating: $file"
           quarto render "$file" --to html --execute-dir . || {
             echo "Error in file: $file"
             exit 1
           }
         done
+
+        # テンプレートファイルがない場合はスキップ
+        if ! find reports/ -name "*.qmd" -type f -not -path "*/templates/*" | grep -q .; then
+          echo "No .qmd files to validate (excluding templates)"
+        fi
 
   build-html:
     name: Build HTML Reports
