@@ -75,7 +75,7 @@ jobs:
         # .qmd ファイルの構文チェック
         find reports/ -name "*.qmd" -type f | while read file; do
           echo "Validating: $file"
-          quarto render "$file" --to html --execute-dir . --quiet || {
+          quarto render "$file" --to html --execute-dir . || {
             echo "Error in file: $file"
             exit 1
           }
