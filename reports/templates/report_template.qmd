@@ -36,13 +36,12 @@ format:
     tbl-cap-location: top
 
 bibliography: ../../sources/references/bibliography.bib
-csl: styles/apa.csl
+# csl: styles/apa.csl  # CSLファイルが必要な場合は追加してください
 
 crossref:
   fig-title: "図"
   tbl-title: "表"
   eq-title: "式"
-  sec-title: "章"
   title-delim: ":"
   fig-prefix: "図"
   tbl-prefix: "表"
@@ -65,7 +64,7 @@ report:
 :::{.callout-important}
 ## 重要ポイント
 
-この報告書は[調査期間: `r rmarkdown::metadata$report$period$start` - `r rmarkdown::metadata$report$period$end`]における`r paste(rmarkdown::metadata$report$scope, collapse="、")`に関する包括的な調査結果をまとめたものです。
+この報告書は[調査期間: {{< meta report.period.start >}} - {{< meta report.period.end >}}]における{{< meta report.type >}}に関する包括的な調査結果をまとめたものです。
 :::
 
 ## 調査の背景と目的
@@ -139,9 +138,9 @@ report:
 
 ## データ収集期間
 
-**調査実施期間**: `r rmarkdown::metadata$report$period$start` - `r rmarkdown::metadata$report$period$end`
+**調査実施期間**: {{< meta report.period.start >}} - {{< meta report.period.end >}}
 
-# 調査結果
+# 調査結果 {#sec-results}
 
 ## テーマ1: [調査テーマ名]
 
@@ -320,8 +319,8 @@ scripts/generate-diagrams.sh mermaid sample-flow.mmd --inkscape
 :::{.callout-note}
 ## 文書情報
 
-- **作成日**: `r Sys.Date()`
-- **最終更新日**: `r Sys.Date()`
+- **作成日**: {{< meta date >}}
+- **最終更新日**: {{< meta date >}}
 - **バージョン**: 1.0
 - **作成者**: [作成者名/組織名]
 - **レビュー者**: [レビュー者名]
@@ -333,7 +332,7 @@ scripts/generate-diagrams.sh mermaid sample-flow.mmd --inkscape
 
 | バージョン | 日付 | 変更内容 | 変更者 |
 |------------|------|----------|--------|
-| 1.0 | `r Sys.Date()` | 初版作成 | [名前] |
+| 1.0 | {{< meta date >}} | 初版作成 | [名前] |
 | | | | |
 
 : 改訂履歴 {#tbl-revisions}
