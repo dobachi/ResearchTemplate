@@ -1,0 +1,31 @@
+---
+title: "調査報告書"
+subtitle: "Research Report"
+author: "研究者名"
+date: today
+lang: ja
+---
+
+# はじめに {.unnumbered}
+
+このサイトには調査報告書が含まれています。
+
+## 報告書一覧
+
+以下の報告書が利用可能です：
+
+- [報告書テンプレート](reports/templates/report_template.qmd) - 調査報告書のテンプレート
+
+## プロジェクトについて
+
+このプロジェクトは[ResearchTemplate](https://github.com/dobachi/ResearchTemplate)を使用して作成されています。
+
+### 使用技術
+
+- **Quarto**: 次世代科学技術出版システム
+- **GitHub Actions**: 自動ビルド・デプロイ
+- **参考文献管理**: 統合された引用管理システム
+
+## ライセンス
+
+このプロジェクトは Apache-2.0 ライセンスの下で公開されています。
