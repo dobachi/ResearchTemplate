@@ -1,0 +1,48 @@
+project:
+  type: book
+  output-dir: output
+
+book:
+  title: "調査報告書"
+  subtitle: "Research Report"
+  author: "研究者名"
+  date: today
+
+  chapters:
+    - index.qmd
+
+  sidebar:
+    title: "調査報告書"
+    collapse-level: 1
+
+format:
+  html:
+    theme:
+      - journal
+      - reports/templates/styles/custom.scss
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    code-fold: true
+    css: reports/templates/styles/report-style.css
+
+  pdf:
+    documentclass: scrartcl
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    geometry:
+      - margin=2cm
+    lang: ja
+    pdf-engine: xelatex
+    mainfont: "Noto Sans CJK JP"
+
+bibliography: sources/references/bibliography.bib
+
+crossref:
+  fig-title: "図"
+  tbl-title: "表"
+  title-delim: ":"
+  fig-prefix: "図"
+  tbl-prefix: "表"
