@@ -27,6 +27,14 @@ format:
     mainfont: "Noto Sans CJK JP"
     pdf-engine: xelatex
 
+  epub:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    epub-cover-image: cover.png
+    fig-cap-location: bottom
+    tbl-cap-location: top
+
 bibliography: ../../sources/references/bibliography.bib
 csl: styles/apa.csl
 

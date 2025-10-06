@@ -22,13 +22,14 @@ on:
   workflow_dispatch:
     inputs:
       build_format:
-        description: 'Build format (html, pdf, all)'
+        description: 'Build format (html, pdf, epub, all)'
         required: false
         default: 'all'
         type: choice
         options:
         - html
         - pdf
+        - epub
         - all
       quarto_version:
         description: 'Quarto version'
@@ -168,10 +169,53 @@ jobs:
           output/**/*.pdf
         retention-days: 30
 
+  build-epub:
+    name: Build EPUB Reports
+    runs-on: ubuntu-latest
+    needs: setup-and-check
+    if: |
+      (inputs.build_format == 'epub' || inputs.build_format == 'all' || inputs.build_format == null)
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Quarto
+      uses: quarto-dev/quarto-actions/setup@v2
+
+    - name: Setup EPUB dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y pandoc
+
+    - name: Setup project
+      run: |
+        if [ ! -f "_quarto.yml" ]; then
+          scripts/setup-quarto.sh
+        fi
+
+    - name: Build EPUB reports
+      run: |
+        # EPUBフォーマットでレンダリング
+        if [ "${{ inputs.build_format }}" = "epub" ] || [ "${{ inputs.build_format }}" = "all" ] || [ -z "${{ inputs.build_format }}" ]; then
+          echo "Building EPUB reports..."
+          quarto render --to epub
+        fi
+
+    - name: Upload EPUB artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: epub-reports
+        path: |
+          _site/**/*.epub
+          output/**/*.epub
+        retention-days: 30
+
   deploy-reports:
     name: Deploy Reports to GitHub Pages
     runs-on: ubuntu-latest
-    needs: [build-html, build-pdf]
+    needs: [build-html, build-pdf, build-epub]
     if: |
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push'
@@ -200,7 +244,7 @@ jobs:
   create-release:
     name: Create Release
     runs-on: ubuntu-latest
-    needs: [build-html, build-pdf]
+    needs: [build-html, build-pdf, build-epub]
     if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
@@ -220,6 +264,13 @@ jobs:
         path: release/pdf/
       continue-on-error: true
 
+    - name: Download EPUB artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: epub-reports
+        path: release/epub/
+      continue-on-error: true
+
     - name: Create release archive
       run: |
         # HTMLレポートの圧縮
@@ -234,6 +285,13 @@ jobs:
           cd ../..
         fi
 
+        # EPUBレポートの圧縮（存在する場合）
+        if [ -d "release/epub" ]; then
+          cd release/epub
+          zip -r "../../research-reports-epub-${GITHUB_REF#refs/tags/}.zip" .
+          cd ../..
+        fi
+
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
@@ -245,6 +303,7 @@ jobs:
           このリリースには以下が含まれています：
           - 📄 HTML形式の報告書（Webブラウザ表示用）
           - 📋 PDF形式の報告書（印刷・配布用）
+          - 📚 EPUB形式の報告書（電子書籍リーダー用）
 
           ### 生成システム
           - **Quarto**: 次世代科学技術出版システム
@@ -258,7 +317,7 @@ jobs:
   notify-completion:
     name: Notify Build Completion
     runs-on: ubuntu-latest
-    needs: [setup-and-check, build-html, build-pdf]
+    needs: [setup-and-check, build-html, build-pdf, build-epub]
     if: always()
 
     steps:
@@ -267,13 +326,14 @@ jobs:
         echo "Setup and Check: ${{ needs.setup-and-check.result }}"
         echo "HTML Build: ${{ needs.build-html.result }}"
         echo "PDF Build: ${{ needs.build-pdf.result }}"
+        echo "EPUB Build: ${{ needs.build-epub.result }}"
 
         if [[ "${{ needs.setup-and-check.result }}" == "failure" ]]; then
           echo "::error::Setup or quality check failed"
           exit 1
         fi
 
-        if [[ "${{ needs.build-html.result }}" == "failure" || "${{ needs.build-pdf.result }}" == "failure" ]]; then
+        if [[ "${{ needs.build-html.result }}" == "failure" || "${{ needs.build-pdf.result }}" == "failure" || "${{ needs.build-epub.result }}" == "failure" ]]; then
           echo "::warning::Some builds failed"
         fi
 
