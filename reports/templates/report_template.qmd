@@ -20,7 +20,7 @@ format:
     tbl-cap-location: top
 
   pdf:
-    documentclass: scrartcl
+    documentclass: scrbook
     toc: true
     number-sections: true
     geometry: margin=2cm

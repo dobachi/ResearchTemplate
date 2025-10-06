@@ -265,7 +265,7 @@ format:
     css: reports/templates/styles/report-style.css
 
   pdf:
-    documentclass: scrartcl
+    documentclass: scrbook
     toc: true
     toc-depth: 3
     number-sections: true
