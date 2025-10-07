@@ -131,32 +131,33 @@ jobs:
       (inputs.build_format == 'pdf' || inputs.build_format == 'all' || inputs.build_format == null) &&
       (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'build-pdf'))
 
-    # 日本語LaTeX環境を含むコンテナを使用
-    container:
-      image: ghcr.io/xu-cheng/texlive-full:latest
-      options: --user root
-
-    defaults:
-      run:
-        shell: bash
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Check package manager and install dependencies
-      run: |
-        # パッケージマネージャーを検出
-        if command -v apt-get >/dev/null 2>&1; then
-          apt-get update
-          apt-get install -y curl wget gdebi-core fonts-noto-cjk fonts-noto-cjk-extra gh
-        elif command -v apk >/dev/null 2>&1; then
-          apk update
-          apk add --no-cache curl wget bash font-noto-cjk github-cli
-        fi
-
     - name: Setup Quarto
       uses: quarto-dev/quarto-actions/setup@v2
+
+    - name: Install LaTeX and fonts
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          texlive-latex-base \
+          texlive-latex-recommended \
+          texlive-latex-extra \
+          texlive-fonts-recommended \
+          texlive-fonts-extra \
+          texlive-xetex \
+          texlive-luatex \
+          fonts-noto-cjk \
+          fonts-noto-cjk-extra \
+          librsvg2-bin
+
+    - name: Verify installations
+      run: |
+        quarto --version
+        quarto check
+        xelatex --version | head -1
 
     - name: Setup project
       run: |
@@ -233,46 +234,47 @@ jobs:
       github.ref == 'refs/heads/main' &&
       github.event_name == 'push'
 
-    # 日本語LaTeX環境を含むコンテナを使用
-    container:
-      image: ghcr.io/xu-cheng/texlive-full:latest
-      options: --user root
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
 
-    defaults:
-      run:
-        shell: bash
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Check package manager and install dependencies
-      run: |
-        # パッケージマネージャーを検出
-        if command -v apt-get >/dev/null 2>&1; then
-          apt-get update
-          apt-get install -y curl wget gdebi-core fonts-noto-cjk fonts-noto-cjk-extra gh
-        elif command -v apk >/dev/null 2>&1; then
-          apk update
-          apk add --no-cache curl wget bash font-noto-cjk github-cli
-        fi
-
-    - name: Setup Quarto
-      uses: quarto-dev/quarto-actions/setup@v2
-
-    - name: Setup project and render
-      run: |
-        if [ ! -f "_quarto.yml" ]; then
-          scripts/setup-quarto.sh
-        fi
-        quarto render
-
-    - name: Deploy to GitHub Pages
-      uses: quarto-dev/quarto-actions/publish@v2
+    - name: Download HTML artifacts
+      uses: actions/download-artifact@v4
       with:
-        target: gh-pages
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: html-reports
+        path: ./html-output
+
+    - name: Download PDF artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: pdf-reports
+        path: ./html-output
+      continue-on-error: true
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload to Pages
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: ./html-output
+
+    - name: Deploy to Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+    - name: Generate deployment summary
+      run: |
+        echo "## 🚀 Deployment Results" >> $GITHUB_STEP_SUMMARY
+        echo "- Deployment Status: ✅ Success" >> $GITHUB_STEP_SUMMARY
+        echo "- Page URL: ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Auto-Deploy: Enabled for main branch" >> $GITHUB_STEP_SUMMARY
 
   create-release:
     name: Create Release
