@@ -254,3 +254,11 @@ scripts/check-references.sh reports/your-report.qmd --check-urls
 ## サポート
 
 問題が発生した場合は、[Issues](https://github.com/ユーザー名/リポジトリ名/issues)でお知らせください。
+
+## GitHub Pages
+
+このプロジェクトは GitHub Pages にデプロイされています。
+
+- URL: https://dobachi.github.io/ResearchTemplate/
+- ビルドシステム: Quarto + GitHub Actions
+
