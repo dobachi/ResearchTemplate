@@ -96,3 +96,5 @@ credentials/
 # キャッシュ
 .cache/
 *.cache
+
+/.quarto/

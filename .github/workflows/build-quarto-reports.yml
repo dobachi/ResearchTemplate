@@ -118,9 +118,7 @@ jobs:
       if: success()
       with:
         name: html-reports
-        path: |
-          _site/
-          output/
+        path: output/
         retention-days: 30
 
   build-pdf:
@@ -178,9 +176,7 @@ jobs:
       if: success()
       with:
         name: pdf-reports
-        path: |
-          _site/**/*.pdf
-          output/**/*.pdf
+        path: output/**/*.pdf
         retention-days: 30
 
   build-epub:
@@ -221,9 +217,7 @@ jobs:
       if: success()
       with:
         name: epub-reports
-        path: |
-          _site/**/*.epub
-          output/**/*.epub
+        path: output/**/*.epub
         retention-days: 30
 
   deploy-reports:
@@ -308,9 +302,14 @@ jobs:
 
     - name: Create release archive
       run: |
-        # HTMLレポートの圧縮
+        # アーカイブ前の構造確認
+        echo "=== Checking HTML artifact structure ==="
+        find release/html -type f -o -type d | head -20
+
+        # HTMLレポートの圧縮（site_libsを含む全ファイル）
         cd release/html
-        zip -r "../../research-reports-html-${GITHUB_REF#refs/tags/}.zip" .
+        # 隠しファイルも含めて全て圧縮
+        zip -r "../../research-reports-html-${GITHUB_REF#refs/tags/}.zip" . -i '*'
         cd ../..
 
         # PDFレポートの圧縮（存在する場合）

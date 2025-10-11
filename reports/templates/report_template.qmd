@@ -31,7 +31,7 @@ format:
     toc: true
     toc-depth: 3
     number-sections: true
-    epub-cover-image: cover.png
+    # epub-cover-image: cover.png  # カバー画像が必要な場合は作成してください
     fig-cap-location: bottom
     tbl-cap-location: top
 

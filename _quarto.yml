@@ -26,6 +26,8 @@ format:
     number-sections: true
     code-fold: true
     css: reports/templates/styles/report-style.css
+    self-contained: true
+    embed-resources: true
 
   pdf:
     documentclass: scrbook

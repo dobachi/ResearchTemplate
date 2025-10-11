@@ -30,20 +30,27 @@ help:
 .PHONY: html
 html:
 	@echo "📄 HTML版を生成中..."
+	@echo "  - テンプレートをビルド..."
 	quarto render $(REPORT_TEMPLATE) --to html
+	@echo "  - プロジェクト全体をビルド（site_libs生成）..."
+	quarto render --to html
 	@echo "✅ HTML生成完了"
 
 # PDF生成
 .PHONY: pdf
 pdf:
 	@echo "📋 PDF版を生成中..."
+	@echo "  - テンプレートをビルド..."
 	quarto render $(REPORT_TEMPLATE) --to pdf
+	@echo "  - プロジェクト全体をビルド..."
+	quarto render --to pdf
 	@echo "✅ PDF生成完了"
 
 # EPUB生成
 .PHONY: epub
 epub:
 	@echo "📚 EPUB版を生成中..."
+	@echo "  - テンプレートをビルド..."
 	quarto render $(REPORT_TEMPLATE) --to epub
 	@echo "✅ EPUB生成完了"
 
@@ -56,17 +63,26 @@ all-formats: html pdf epub
 .PHONY: package
 package: all-formats
 	@echo "📦 共有用パッケージを生成中..."
+	@echo "  - プロジェクト全体のHTMLを再ビルド（site_libs保持）..."
+	@quarto render --to html
 	@mkdir -p $(PACKAGE_DIR)
 	@mkdir -p $(PACKAGE_DIR)/formats
 	@mkdir -p $(PACKAGE_DIR)/sources
 	@mkdir -p $(PACKAGE_DIR)/references
 
-	# 生成ファイルをコピー
+	# 生成ファイルをコピー（関連ファイルも含む）
 	@echo "  - 生成ファイルをコピー中..."
-	@if [ -d "_site" ]; then \
-		find _site -name "*.html" -exec cp {} $(PACKAGE_DIR)/formats/ \; 2>/dev/null || true; \
-		find _site -name "*.pdf" -exec cp {} $(PACKAGE_DIR)/formats/ \; 2>/dev/null || true; \
-		find _site -name "*.epub" -exec cp {} $(PACKAGE_DIR)/formats/ \; 2>/dev/null || true; \
+	@echo "    HTML/PDF/EPUBファイルをコピー..."
+	@find reports/templates -maxdepth 1 -name "*.html" -exec cp {} $(PACKAGE_DIR)/formats/ \; 2>/dev/null || true
+	@find reports/templates -maxdepth 1 -name "*.pdf" -exec cp {} $(PACKAGE_DIR)/formats/ \; 2>/dev/null || true
+	@find reports/templates -maxdepth 1 -name "*.epub" -exec cp {} $(PACKAGE_DIR)/formats/ \; 2>/dev/null || true
+	@if [ -d "$(OUTPUT_DIR)" ]; then \
+		echo "    プロジェクト全体ビルドの出力もコピー..."; \
+		cp -r $(OUTPUT_DIR)/*.html $(PACKAGE_DIR)/formats/ 2>/dev/null || true; \
+		cp -r $(OUTPUT_DIR)/site_libs $(PACKAGE_DIR)/formats/ 2>/dev/null || true; \
+		cp -r $(OUTPUT_DIR)/search.json $(PACKAGE_DIR)/formats/ 2>/dev/null || true; \
+		find $(OUTPUT_DIR) -maxdepth 1 -name "*.pdf" -exec cp {} $(PACKAGE_DIR)/formats/ \; 2>/dev/null || true; \
+		find $(OUTPUT_DIR) -maxdepth 1 -name "*.epub" -exec cp {} $(PACKAGE_DIR)/formats/ \; 2>/dev/null || true; \
 	fi
 
 	# ソースファイルをコピー
@@ -105,6 +121,8 @@ package: all-formats
 	@echo "" >> $(PACKAGE_DIR)/README.md
 	@echo "## 利用方法" >> $(PACKAGE_DIR)/README.md
 	@echo "1. 生成済みファイル: \`formats/\`内のファイルを参照" >> $(PACKAGE_DIR)/README.md
+	@echo "   - **重要**: HTMLファイルを閲覧する場合は、\`formats/\`ディレクトリ全体を保持してください" >> $(PACKAGE_DIR)/README.md
+	@echo "   - HTMLは\`site_libs/\`と\`search.json\`に依存しています" >> $(PACKAGE_DIR)/README.md
 	@echo "2. 編集・再生成: \`sources/\`内の.qmdファイルを編集し、Quartoで再ビルド" >> $(PACKAGE_DIR)/README.md
 	@echo "3. 図表の編集: \`diagrams/\`内のファイルを編集し、\`scripts/generate-diagrams.sh\`で再生成" >> $(PACKAGE_DIR)/README.md
 
