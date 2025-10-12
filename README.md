@@ -1,264 +1,203 @@
-# 調査報告書テンプレート
+# ResearchTemplate
 
-AI支援による調査報告書作成のためのGitHubテンプレートリポジトリです。
+[![GitHub Pages](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://dobachi.github.io/ResearchTemplate/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
+
+Quartoを使用した調査報告書作成のテンプレートリポジトリです。
 
 ## 特徴
 
-- 🤖 AI指示書システムによる調査・報告書作成支援
-- 📊 構造化された報告書テンプレート（エグゼクティブサマリ、参考文献を含む）
-- 🔍 信頼性の高い情報源の活用と適切な引用管理
-- 📝 HTML/PDF形式での報告書出力対応
-- 🔄 ファイル監視による自動ビルド・継続的インテグレーション
-- ⚡ **Quarto統合**: 次世代科学技術出版システムによる高速・美しいレポート生成
-- 🎯 IT技術、法制度、ソフトウェアプロジェクト等の調査に最適化
+- 📝 **シンプル**: Markdown記法で簡単に記述
+- 🎨 **高品質**: プロフェッショナルなデザイン
+- 📚 **多様な出力**: HTML / PDF / EPUB対応
+- 🔗 **参考文献管理**: BibTeX統合
+- 🤖 **自動化**: GitHub Actions対応
+- 📦 **配布機能**: 報告書をZIPパッケージ化
 
 ## クイックスタート
 
-### 🚀 ワンライナーで新しいプロジェクトを作成（推奨）
-
-以下のワンライナーを実行すると、GitHubプライベートリポジトリ付きの新しいプロジェクトが自動作成されます：
+### 1. リポジトリの準備
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/dobachi/ResearchTemplate/main/scripts/create-project.sh) your-project-name
+# このリポジトリをfork/cloneまたはテンプレートから作成
+git clone https://github.com/dobachi/ResearchTemplate.git
+cd ResearchTemplate
 ```
 
-**前提条件:**
-- [GitHub CLI (gh)](https://cli.github.com/) がインストール済み
-- GitHub CLI が認証済み (`gh auth login`)
-
-**このワンライナーが実行する処理:**
-1. ✅ 新しいプロジェクトディレクトリを作成
-2. ✅ このテンプレートを複製
-3. ✅ GitHubにプライベートリポジトリを作成
-4. ✅ 新しいリポジトリにプッシュ
-5. ✅ AI指示書システム（サブモジュール）を初期化
-6. ✅ プロジェクト設定を自動更新
-
-### 手動での作成方法
-
-#### 1. テンプレートからリポジトリを作成
-
-GitHubで「Use this template」ボタンをクリックして、新しいリポジトリを作成します。
-
-#### 2. 初期設定
+### 2. 報告書を作成
 
 ```bash
-# リポジトリをクローン
-git clone https://github.com/あなたのユーザー名/あなたのリポジトリ名.git
-cd あなたのリポジトリ名
+# テンプレートをコピー
+cp templates/report_template.qmd reports/my-research.qmd
 
-# AI指示書システムの初期化
-git submodule update --init --recursive
-
-# プロジェクト設定の確認
-cat instructions/PROJECT.md
+# エディタで編集
+vim reports/my-research.qmd
 ```
 
-### 調査開始
-
-プロジェクト作成後、以下のように調査を開始できます：
+### 3. ビルド
 
 ```bash
-# プロジェクトディレクトリに移動
-cd your-project-name
+# HTML + PDFでビルド
+make report
 
-# 調査テーマの設定（次のセクション参照）
-# その後、AI支援による調査開始（さらに次のセクション参照）
+# 成果物を確認
+ls output/
 ```
 
-### 3. 調査テーマの設定
-
-`reports/config.yaml`で調査テーマと範囲を設定：
-
-```yaml
-title: "調査報告書タイトル"
-topic: "調査テーマ"
-scope:
-  - IT技術
-  - 法制度
-  - その他
-```
-
-### 4. AI支援による調査開始
+### 4. 配布パッケージ作成
 
 ```bash
-# チェックポイント管理で進捗を追跡
-scripts/checkpoint.sh start "調査タスク名" 5
+# 報告書をZIPパッケージ化（成果物 + ソース）
+make package
 
-# AI指示書を使用して調査を開始
-# Claude/Cursor/Gemini等のAIツールで以下を実行：
-# 1. instructions/PROJECT.mdを読み込み
-# 2. AI指示書システムのROOT_INSTRUCTIONに従って作業
+# dist/に生成されます
+ls dist/
 ```
 
 ## ディレクトリ構造
 
 ```
-.
-├── README.md                    # このファイル
-├── instructions/                # AI指示書と設定
-│   ├── PROJECT.md              # プロジェクト固有の設定
-│   └── ai_instruction_kits/    # AI指示書システム（サブモジュール）
-├── reports/                     # 報告書の保管場所
-│   ├── templates/              # 報告書テンプレート
-│   │   ├── report_template.md  # Markdownテンプレート
-│   │   └── styles/            # HTMLスタイルシート
-│   ├── samples/               # サンプル報告書
-│   └── config.yaml           # 報告書設定
-├── sources/                    # 調査資料の保管場所
-│   ├── references/            # 参考文献
-│   ├── data/                  # データファイル
-│   └── notes/                 # 調査メモ
-├── scripts/                    # ユーティリティスクリプト
-│   ├── checkpoint.sh          # 進捗管理
-│   ├── commit.sh             # クリーンなコミット
-│   ├── setup-quarto.sh       # Quartoセットアップ
-│   ├── build-quarto.sh       # 統合ビルド（Quarto）
-│   ├── dev-server.sh         # 統合開発環境（プレビュー+自動ビルド）
-│   ├── auto-build-quarto.sh  # 自動ビルド（Quarto対応）
-│   ├── check-references.sh   # 参考文献チェック
-│   └── worktree-manager.sh   # Git worktree管理
-└── output/                    # 生成された報告書（gitignore対象）
-    ├── html/
-    └── pdf/
+ResearchTemplate/
+├── templates/          # テンプレートファイル
+│   ├── report_template.qmd
+│   └── styles/
+├── reports/            # ユーザーの報告書（あなたが作成）
+│   └── .gitkeep
+├── examples/           # サンプル報告書
+│   └── technology-survey.qmd
+├── sources/            # リソース
+│   ├── references/    # 参考文献（.bib）
+│   └── diagrams/      # 図表ソース
+├── output/             # ビルド成果物
+├── dist/               # 配布パッケージ
+└── Makefile            # ビルドツール
 ```
 
-## 報告書作成のベストプラクティス
-
-### 1. 信頼性の高い情報源の活用
-
-- 🏛️ 行政機関の公式発表
-- 📚 査読付き学術論文
-- 📋 国際標準・業界標準
-- 🏢 企業の公式技術文書
-
-### 2. 適切な引用と参照
-
-- すべての事実に引用元を明記
-- 参考文献リストとの相互参照を確保
-- 引用形式の一貫性を保つ
-
-### 3. 多角的な視点
-
-- 複数の見解や理論を検討
-- バランスの取れた分析
-- 明確な考察と事実の区別
-
-### 4. 報告書の構成
-
-必須項目：
-- エグゼクティブサマリ
-- 目次
-- 本文（背景、調査方法、結果、考察）
-- 結論
-- 参考文献一覧
-
-## 📊 Quarto統合ビルドシステム
-
-### 🚀 初回セットアップ
+## 基本コマンド
 
 ```bash
-# Quartoのインストールとプロジェクト設定
-scripts/setup-quarto.sh
-
-# 動作確認
-scripts/build-quarto.sh --check
+make help              # ヘルプ表示
+make report            # 報告書をビルド（HTML + PDF）
+make package           # 配布パッケージ作成
+make preview           # ライブプレビュー
+make clean             # ビルド成果物削除
 ```
 
-### ⚡ 基本ビルド
+## ドキュメント
+
+詳細な使い方は[GitHub Pages](https://dobachi.github.io/ResearchTemplate/)をご覧ください：
+
+- [使い方ガイド](https://dobachi.github.io/ResearchTemplate/)
+- [サンプル報告書](https://dobachi.github.io/ResearchTemplate/examples/technology-survey.html)
+- [テンプレート一覧](templates/README.md)
+
+## 要件
+
+### 必須
+
+- [Quarto](https://quarto.org/docs/get-started/) 1.3以上
+
+### オプション（PDF生成用）
+
+- XeLaTeX
+- Noto Sans CJK JP フォント（日本語対応）
+
+### インストール例（Ubuntu/Debian）
 
 ```bash
-# 🔨 統合ビルド（HTML + PDF同時生成）
-scripts/build-quarto.sh
+# Quarto
+wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.4.549/quarto-1.4.549-linux-amd64.deb
+sudo dpkg -i quarto-1.4.549-linux-amd64.deb
 
-# 特定形式のみ
-scripts/build-quarto.sh --format html     # HTML形式のみ
-scripts/build-quarto.sh --format pdf      # PDF形式のみ
-
-# 📱 ライブプレビュー（リアルタイム更新）
-scripts/build-quarto.sh --preview
-# または直接
-quarto preview
+# LaTeX + フォント（PDF生成用）
+sudo apt-get install texlive-xetex fonts-noto-cjk
 ```
 
-### 🚀 統合開発環境（推奨）
+## ワークフロー
+
+### 開発フロー
 
 ```bash
-# プレビュー + 自動ビルドの統合環境
-scripts/dev-server.sh
+# 1. テンプレートをコピー
+cp templates/report_template.qmd reports/my-research.qmd
 
-# カスタムポートで起動
-scripts/dev-server.sh --port 4000
+# 2. ライブプレビュー開始
+make preview
+# ブラウザで http://localhost:xxxx が自動で開きます
 
-# プレビューのみ（自動ビルド無効）
-scripts/dev-server.sh --no-auto-build
+# 3. my-research.qmdを編集
+# 保存すると自動的に再ビルド＆ブラウザ更新
 
-# PDF自動ビルド有効
-scripts/dev-server.sh --format pdf
+# 4. 最終ビルド
+make report
 ```
 
-### 🔄 自動ビルド（単独使用）
+### 配布フロー
 
 ```bash
-# 自動ビルド開始（.qmdファイル監視）
-scripts/auto-build-quarto.sh
+# 1. ビルド（まだの場合）
+make report
 
-# HTML形式のみ自動ビルド
-scripts/auto-build-quarto.sh --format html
+# 2. パッケージ作成
+make package
+
+# 3. 配布
+# dist/research-report-YYYYMMDD.zip を共有
 ```
 
-### 📋 参考文献チェック（継続利用）
+## プロジェクト設計
 
-```bash
-# 引用整合性チェック（URL必須化対応）
-scripts/check-references.sh reports/your-report.qmd
+### テンプレートと報告書の分離
 
-# URL有効性チェック
-scripts/check-references.sh reports/your-report.qmd --check-urls
-```
+- **templates/** = テンプレートファイル（リポジトリに含まれる、コピー元）
+- **reports/** = ユーザーの報告書（git管理外、ローカル作業用）
+- **examples/** = サンプル（GitHub Pages表示用）
 
-### 🚀 GitHub Actionsによる自動化（Quarto版）
+### パッケージの内容
 
-プッシュ時に自動実行：
-- **Quarto品質チェック**: 構文検証と相互参照確認
-- **マルチフォーマット生成**: HTML/PDF同時ビルド
-- **GitHub Pages自動デプロイ**: Quartoネイティブ対応
-- **アーティファクト管理**: 美しいレポートファイル保存
+`make package`で作成されるZIPには以下が含まれます：
 
-### 💡 Quartoシステムの特徴
+- **formats/** - 成果物（HTML/PDF/EPUB）
+- **sources/** - 報告書ソース（.qmd）
+- **references/** - 参考文献（.bib）
+- **diagrams/** - 図表ソース
+- **README.md** - パッケージの説明
 
-- **統合管理**: _quarto.yml による一元設定
-- **自動相互参照**: @fig-chart, @tbl-data でリンク自動生成
-- **完全引用管理**: .bib ファイルと自動連携
-- **美しいテーマ**: プロフェッショナルなデフォルトスタイル
-- **リアルタイムプレビュー**: ライブ更新対応
+**テンプレートやビルドツールは含まれません**（報告書配布のため）
 
-## AI指示書の活用
+## GitHub Actions
 
-このプロジェクトには調査・報告書作成に特化したAI指示書が含まれています：
+mainブランチへのpush時に自動実行：
 
-- `research_analyst.md` - 調査分析の専門指示書
-- `report_writer.md` - 報告書執筆の専門指示書
-- `fact_checker.md` - ファクトチェックと引用管理
+- examples/とindex.qmdをビルド
+- GitHub Pagesにデプロイ
 
-詳細は`instructions/PROJECT.md`を参照してください。
+ユーザーの報告書（reports/）は各自のforkでビルドします。
 
-## コントリビューション
+## 技術スタック
 
-プルリクエストを歓迎します。大きな変更の場合は、まずissueを開いて変更内容について議論してください。
+- **[Quarto](https://quarto.org)**: 科学技術出版システム
+- **Markdown**: 軽量マークアップ言語
+- **LaTeX**: 数式・PDF生成
+- **BibTeX**: 参考文献管理
+- **Make**: ビルド自動化
+- **GitHub Actions**: CI/CD
 
 ## ライセンス
 
 [Apache-2.0](LICENSE)
 
+## 貢献
+
+Issue、Pull Requestを歓迎します！
+
 ## サポート
 
-問題が発生した場合は、[Issues](https://github.com/ユーザー名/リポジトリ名/issues)でお知らせください。
+- [Issues](https://github.com/dobachi/ResearchTemplate/issues)
+- [GitHub Pages ドキュメント](https://dobachi.github.io/ResearchTemplate/)
 
-## GitHub Pages
+## 関連リンク
 
-このプロジェクトは GitHub Pages にデプロイされています。
-
-- URL: https://dobachi.github.io/ResearchTemplate/
-- ビルドシステム: Quarto + GitHub Actions
-
+- [Quarto公式ドキュメント](https://quarto.org/docs/guide/)
+- [Markdown記法](https://www.markdownguide.org/)
+- [BibTeX形式](https://www.bibtex.org/)
