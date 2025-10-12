@@ -1,12 +1,18 @@
 ---
 title: "ResearchTemplate"
-subtitle: "調査報告書作成テンプレート"
+subtitle: "調査報告書作成テンプレート - 使い方ガイド"
 ---
 
 ## 概要
 
 このプロジェクトは、Quartoを使用した調査報告書作成のテンプレートリポジトリです。
 高品質な調査報告書を効率的に作成するためのツールとワークフローを提供します。
+
+::: {.callout-tip}
+## サンプルも使い方ガイドです
+
+[技術動向調査報告書](examples/technology-survey.html)は、Quartoの各種機能（数式、図表、参考文献等）の実例を示すサンプルであり、同時にQuartoの使い方を学べるガイドとしても機能します。
+:::
 
 ## 特徴
 
@@ -15,13 +21,14 @@ subtitle: "調査報告書作成テンプレート"
 - 📚 **多様な出力**: HTML / PDF / EPUB対応
 - 🔗 **参考文献管理**: BibTeX統合
 - 🤖 **自動化**: GitHub Actions対応
+- 📦 **配布機能**: 報告書をZIPパッケージ化
 
 ## クイックスタート
 
-### 1. テンプレートを取得
+### 1. リポジトリの準備
 
 ```bash
-# このリポジトリをfork/clone
+# このリポジトリをfork/cloneまたはテンプレートから作成
 git clone https://github.com/dobachi/ResearchTemplate.git
 cd ResearchTemplate
 ```
@@ -46,17 +53,17 @@ make report
 ls output/
 ```
 
-### 4. 配布
+### 4. 配布パッケージ作成
 
 ```bash
-# 配布用パッケージ作成
+# 報告書をZIPパッケージ化（成果物 + ソース）
 make package
 
-# dist/にZIPファイルが生成されます
+# dist/に生成されます
 ls dist/
 ```
 
-## プロジェクト構造
+## ディレクトリ構造
 
 ```
 ResearchTemplate/
@@ -75,72 +82,76 @@ ResearchTemplate/
 └── Makefile            # ビルドツール
 ```
 
-## 使い方
+## 基本コマンド
 
-### 基本コマンド
+```bash
+make help              # ヘルプ表示
+make report            # 報告書をビルド（HTML + PDF）
+make package           # 配布パッケージ作成
+make preview           # ライブプレビュー
+make clean             # ビルド成果物削除
+```
 
-| コマンド | 説明 |
-|---------|------|
-| `make help` | ヘルプ表示 |
-| `make report` | 報告書をビルド |
-| `make package` | 配布パッケージ作成 |
-| `make preview` | ライブプレビュー |
-| `make clean` | ビルド成果物削除 |
+## ワークフロー
 
-### ワークフロー
+### 開発フロー
 
-#### 初回セットアップ
+```bash
+# 1. テンプレートをコピー
+cp templates/report_template.qmd reports/my-research.qmd
 
-1. リポジトリをfork/clone
-2. Quartoをインストール（https://quarto.org）
-3. 必要に応じてXeLaTeX + Noto Fontsをインストール（PDF生成用）
+# 2. ライブプレビュー開始
+make preview
+# ブラウザで http://localhost:xxxx が自動で開きます
 
-#### 報告書作成
+# 3. my-research.qmdを編集
+# 保存すると自動的に再ビルド＆ブラウザ更新
 
-1. **テンプレートをコピー**
-   ```bash
-   cp templates/report_template.qmd reports/my-research.qmd
-   ```
+# 4. 最終ビルド
+make report
+```
 
-2. **内容を編集**
-   - タイトル、著者、日付を設定
-   - 調査内容を記述
-   - 参考文献を追加（`sources/references/bibliography.bib`）
+### 配布フロー
 
-3. **ビルド**
-   ```bash
-   make report
-   ```
+```bash
+# 1. ビルド（まだの場合）
+make report
 
-4. **確認**
-   - `output/my-research.html` - ブラウザで表示
-   - `output/my-research.pdf` - PDF閲覧
+# 2. パッケージ作成
+make package
 
-5. **配布**
-   ```bash
-   make package
-   # dist/research-report-YYYYMMDD.zip が生成されます
-   ```
+# 3. 配布
+# dist/research-report-YYYYMMDD.zip を共有
+```
 
-## サンプル
+## プロジェクト設計
 
-実際の報告書の例：
+### テンプレートと報告書の分離
 
-- [技術動向調査報告書](examples/technology-survey.qmd) - Quarto機能のデモンストレーション
+- **templates/** = テンプレートファイル（リポジトリに含まれる、コピー元）
+- **reports/** = ユーザーの報告書（git管理外、ローカル作業用）
+- **examples/** = サンプル（GitHub Pages表示用）
 
-## テンプレート
+### パッケージの内容
 
-利用可能なテンプレート：
+`make package`で作成されるZIPには以下が含まれます：
 
-- [report_template.qmd](templates/README.md) - 基本的な調査報告書テンプレート
+- **formats/** - 成果物（HTML/PDF/EPUB）
+- **sources/** - 報告書ソース（.qmd）
+- **references/** - 参考文献（.bib）
+- **diagrams/** - 図表ソース
+- **README.md** - パッケージの説明
 
-## 技術スタック
+**テンプレートやビルドツールは含まれません**（報告書配布のため）
 
-- **[Quarto](https://quarto.org)**: 科学技術出版システム
-- **Markdown**: 軽量マークアップ言語
-- **LaTeX**: 数式・PDF生成
-- **BibTeX**: 参考文献管理
-- **GitHub Actions**: CI/CD
+## GitHub Actions
+
+mainブランチへのpush時に自動実行：
+
+- examples/とindex.qmdをビルド
+- GitHub Pagesにデプロイ
+
+ユーザーの報告書（reports/）は各自のforkでビルドします。
 
 ## 要件
 
@@ -157,22 +168,37 @@ ResearchTemplate/
 
 ```bash
 # Quarto
-sudo apt-get install quarto
+wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.4.549/quarto-1.4.549-linux-amd64.deb
+sudo dpkg -i quarto-1.4.549-linux-amd64.deb
 
 # LaTeX + フォント（PDF生成用）
 sudo apt-get install texlive-xetex fonts-noto-cjk
 ```
 
+## 技術スタック
+
+- **[Quarto](https://quarto.org)**: 科学技術出版システム
+- **Markdown**: 軽量マークアップ言語
+- **LaTeX**: 数式・PDF生成
+- **BibTeX**: 参考文献管理
+- **Make**: ビルド自動化
+- **GitHub Actions**: CI/CD
+
 ## ライセンス
 
-このプロジェクトは Apache-2.0 ライセンスの下で公開されています。
+[Apache-2.0](LICENSE)
 
 ## 貢献
 
 Issue、Pull Requestを歓迎します！
 
-## 参考リンク
+## サポート
+
+- [Issues](https://github.com/dobachi/ResearchTemplate/issues)
+- [GitHub リポジトリ](https://github.com/dobachi/ResearchTemplate)
+
+## 関連リンク
 
 - [Quarto公式ドキュメント](https://quarto.org/docs/guide/)
-- [GitHub リポジトリ](https://github.com/dobachi/ResearchTemplate)
-- [GitHub Pages デモ](https://dobachi.github.io/ResearchTemplate/)
+- [Markdown記法](https://www.markdownguide.org/)
+- [BibTeX形式](https://www.bibtex.org/)
