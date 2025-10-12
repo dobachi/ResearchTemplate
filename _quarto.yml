@@ -10,9 +10,8 @@ project:
     - "!sources/"
     - "!dist/"
     - "!instructions/"
-    - "!CLAUDE.md"
-    - "!CURSOR.md"
-    - "!*.en.md"
+    - "!CLAUDE*.md"
+    - "!CURSOR*.md"
 
 website:
   title: "ResearchTemplate"
