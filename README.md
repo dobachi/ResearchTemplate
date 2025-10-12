@@ -108,6 +108,22 @@ ResearchTemplate/
 
 詳細は[使い方ガイド](https://dobachi.github.io/ResearchTemplate/)を参照してください。
 
+## AI指示書システム
+
+このプロジェクトは[AI指示書システム](instructions/ai_instruction_kits/)を統合しています。
+
+**対応AIツール**:
+- Claude Code（推奨）
+- Cursor
+- その他のAIコーディングアシスタント
+
+**使い方**:
+- AIツールは自動的に`CLAUDE.md`や`CURSOR.md`を読み込みます
+- プロジェクト固有の指示は`instructions/PROJECT.md`を参照
+- チェックポイント機能: `scripts/checkpoint.sh`で作業履歴を記録
+
+詳細は[CLAUDE.md](CLAUDE.md)を参照してください。
+
 ## ライセンス
 
 [Apache-2.0](LICENSE)

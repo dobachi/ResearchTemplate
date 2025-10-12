@@ -144,6 +144,32 @@ make package
 
 **テンプレートやビルドツールは含まれません**（報告書配布のため）
 
+## AI指示書システム
+
+このプロジェクトは[AI指示書システム](https://github.com/your-org/ai_instruction_kits)を統合しています。
+
+### 対応AIツール
+
+- Claude Code（推奨）
+- Cursor
+- その他のAIコーディングアシスタント
+
+### 使い方
+
+AIツールを使用する場合、自動的に以下のファイルが読み込まれます：
+
+- `CLAUDE.md` - Claude Code用の設定
+- `CURSOR.md` - Cursor用の設定
+- `instructions/PROJECT.md` - プロジェクト固有の指示
+
+### 主な機能
+
+- **品質基準の自動適用**: 事実と考察の区別、参考文献管理等
+- **チェックポイント管理**: `scripts/checkpoint.sh`で作業履歴を記録
+- **ビルドコマンド統合**: Quartoビルドシステムとの連携
+
+詳細は[CLAUDE.md](CLAUDE.md)を参照してください。
+
 ## GitHub Actions
 
 mainブランチへのpush時に自動実行：
