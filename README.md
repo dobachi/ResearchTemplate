@@ -112,8 +112,8 @@ ResearchTemplate/
 
 [Apache-2.0](LICENSE)
 
-## サポート
+## リンク
 
+- [GitHub Pages](https://dobachi.github.io/ResearchTemplate/) - 詳細ドキュメント
 - [Issues](https://github.com/dobachi/ResearchTemplate/issues) - バグ報告・機能要望
-- [GitHub Pages](https://dobachi.github.io/ResearchTemplate/) - ドキュメント
 - [Quarto公式ドキュメント](https://quarto.org/docs/guide/) - Quartoの詳細

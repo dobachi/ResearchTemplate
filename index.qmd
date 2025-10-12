@@ -188,10 +188,6 @@ sudo apt-get install texlive-xetex fonts-noto-cjk
 
 [Apache-2.0](LICENSE)
 
-## 貢献
-
-Issue、Pull Requestを歓迎します！
-
 ## サポート
 
 - [Issues](https://github.com/dobachi/ResearchTemplate/issues)
