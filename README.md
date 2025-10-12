@@ -108,14 +108,21 @@ ResearchTemplate/
 
 詳細は[使い方ガイド](https://dobachi.github.io/ResearchTemplate/)を参照してください。
 
-## AI指示書システム
+## AI指示書システム（オプション）
 
-このプロジェクトは[AI指示書システム](instructions/ai_instruction_kits/)を統合しています。
+このプロジェクトは[AI指示書システム](https://github.com/your-org/ai_instruction_kits)をgitサブモジュールとして任意で導入できます。
 
 **対応AIツール**:
 - Claude Code（推奨）
 - Cursor
 - その他のAIコーディングアシスタント
+
+**セットアップ（任意）**:
+```bash
+# AI指示書システムをサブモジュールとして追加
+git submodule add https://github.com/your-org/ai_instruction_kits.git instructions/ai_instruction_kits
+git submodule update --init --recursive
+```
 
 **使い方**:
 - AIツールは自動的に`CLAUDE.md`や`CURSOR.md`を読み込みます
