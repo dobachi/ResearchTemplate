@@ -115,7 +115,7 @@ def hello_world():
 
 ### 参考文献
 
-BibTeX形式の参考文献を使用できます[@sample2024]。
+BibTeX形式の参考文献を使用できます[@cite2024example]。
 
 # 考察
 
