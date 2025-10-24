@@ -46,6 +46,18 @@ format:
     css: templates/styles/report-style.css
     link-external-newwindow: true
 
+  pdf:
+    documentclass: scrbook
+    toc: true
+    number-sections: true
+    geometry: margin=2cm
+    # 日本語PDF生成のための設定
+    # XeLaTeXとNoto Sans CJK JPフォントが必要
+    # Ubuntu/Debian: sudo apt install texlive-xetex fonts-noto-cjk
+    # macOS: brew install --cask mactex && brew install font-noto-sans-cjk-jp
+    mainfont: "Noto Sans CJK JP"
+    pdf-engine: xelatex
+
 bibliography: sources/references/bibliography.bib
 
 crossref:

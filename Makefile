@@ -96,7 +96,10 @@ package:
 		exit 1; \
 	fi
 	@
-	@mkdir -p $(DIST_DIR)/package/{formats,sources,references,diagrams}
+	@mkdir -p $(DIST_DIR)/package/formats
+	@mkdir -p $(DIST_DIR)/package/sources
+	@mkdir -p $(DIST_DIR)/package/references
+	@mkdir -p $(DIST_DIR)/package/diagrams
 	@
 	@# 成果物をコピー
 	@echo "  - 成果物をコピー中..."
@@ -105,6 +108,11 @@ package:
 	@find $(OUTPUT_DIR) -maxdepth 1 -name '*.epub' -exec cp {} $(DIST_DIR)/package/formats/ \; 2>/dev/null || true
 	@cp -r $(OUTPUT_DIR)/site_libs $(DIST_DIR)/package/formats/ 2>/dev/null || true
 	@cp -r $(OUTPUT_DIR)/search.json $(DIST_DIR)/package/formats/ 2>/dev/null || true
+	@
+	@# 画像ファイルをコピー（*_files/ディレクトリ）
+	@echo "  - 画像ファイルをコピー中..."
+	@find $(OUTPUT_DIR) -maxdepth 1 -type d -name '*_files' -exec cp -r {} $(DIST_DIR)/package/formats/ \; 2>/dev/null || true
+	@find $(OUTPUT_DIR) -maxdepth 1 \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' -o -name '*.svg' -o -name '*.gif' \) -exec cp {} $(DIST_DIR)/package/formats/ \; 2>/dev/null || true
 	@
 	@# ソースをコピー
 	@echo "  - ソースファイルをコピー中..."
