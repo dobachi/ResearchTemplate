@@ -33,7 +33,44 @@ git clone https://github.com/dobachi/ResearchTemplate.git
 cd ResearchTemplate
 ```
 
-### 2. 報告書を作成
+### 2. 環境セットアップ（初回のみ）
+
+#### 🚀 ワンライナーセットアップ（推奨）
+
+すべての依存関係（Quarto、日本語LaTeX、submodule）を自動インストール：
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/dobachi/ResearchTemplate/main/scripts/setup.sh)
+```
+
+または、既にクローン済みの場合：
+
+```bash
+scripts/setup.sh
+```
+
+::: {.callout-note}
+## 自動インストールされるもの
+
+- ✅ Git submodule（AI指示書システム）
+- ✅ Pandoc（必須）
+- ✅ Quarto（対話的にインストール確認）
+- ✅ 日本語LaTeX環境（TeX Live / MacTeX + Noto CJK フォント）
+- ✅ その他の依存パッケージ
+
+**対応OS:** Ubuntu/Debian、RedHat/Fedora、macOS
+:::
+
+#### 手動セットアップ
+
+最小限の設定のみ行う場合：
+
+```bash
+# Git submoduleの初期化のみ
+git submodule update --init --recursive
+```
+
+### 3. 報告書を作成
 
 ```bash
 # テンプレートをコピー
@@ -43,7 +80,7 @@ cp templates/report_template.qmd reports/my-research.qmd
 vim reports/my-research.qmd
 ```
 
-### 3. ビルド
+### 4. ビルド
 
 ```bash
 # HTML + PDFでビルド
@@ -53,7 +90,7 @@ make report
 ls output/
 ```
 
-### 4. 配布パッケージ作成
+### 5. 配布パッケージ作成
 
 ```bash
 # 報告書をZIPパッケージ化（成果物 + ソース）
@@ -194,13 +231,34 @@ mainブランチへのpush時に自動実行：
 ### 必須
 
 - [Quarto](https://quarto.org/docs/get-started/) 1.3以上
+- Git
+- Pandoc
 
-### オプション（PDF生成用）
+### 推奨（PDF生成用）
 
 - XeLaTeX
 - Noto Sans CJK JP フォント（日本語対応）
 
-### インストール例（Ubuntu/Debian）
+### 🚀 自動インストール（推奨）
+
+すべての依存関係をワンライナーで自動インストール：
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/dobachi/ResearchTemplate/main/scripts/setup.sh)
+```
+
+::: {.callout-tip}
+## セットアップスクリプトの特徴
+
+- OS自動検出（Ubuntu/Debian、RedHat/Fedora、macOS対応）
+- 対話的なインストール確認
+- Git submodule自動初期化
+- 日本語LaTeX環境の完全セットアップ
+:::
+
+**対応OS:** Ubuntu/Debian、RedHat/Fedora、macOS
+
+### 手動インストール例（Ubuntu/Debian）
 
 ```bash
 # Quarto
