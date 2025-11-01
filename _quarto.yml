@@ -1,0 +1,68 @@
+project:
+  type: website
+  output-dir: output
+  render:
+    - "index.qmd"
+    - "examples/"
+    - "templates/README.md"
+    - "!templates/*.qmd"
+    - "!reports/"
+    - "!sources/"
+    - "!dist/"
+    - "!instructions/"
+    - "!CLAUDE*.md"
+    - "!CURSOR*.md"
+
+website:
+  title: "ResearchTemplate"
+  description: "調査報告書作成テンプレート"
+
+  navbar:
+    background: primary
+    left:
+      - text: "ホーム"
+        href: index.qmd
+      - text: "サンプル"
+        menu:
+          - text: "技術動向調査"
+            href: examples/technology-survey.qmd
+      - text: "テンプレート"
+        href: templates/README.md
+      - text: "GitHub"
+        icon: github
+        href: https://github.com/dobachi/ResearchTemplate
+
+  sidebar: false
+
+format:
+  html:
+    theme:
+      - journal
+      - templates/styles/custom.scss
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    css: templates/styles/report-style.css
+    link-external-newwindow: true
+
+  pdf:
+    documentclass: scrbook
+    toc: true
+    number-sections: true
+    geometry: margin=2cm
+    # 日本語PDF生成のための設定
+    # XeLaTeXとNoto Sans CJK JPフォントが必要
+    # Ubuntu/Debian: sudo apt install texlive-xetex fonts-noto-cjk
+    # macOS: brew install --cask mactex && brew install font-noto-sans-cjk-jp
+    mainfont: "Noto Sans CJK JP"
+    pdf-engine: xelatex
+
+bibliography: sources/references/bibliography.bib
+
+crossref:
+  fig-title: "図"
+  tbl-title: "表"
+  title-delim: ":"
+  fig-prefix: "図"
+  tbl-prefix: "表"
