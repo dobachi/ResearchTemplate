@@ -7,8 +7,28 @@ AI支援による調査報告書作成のためのGitHubテンプレートリポ
 - 🤖 AI指示書システムによる調査・報告書作成支援
 - 📊 構造化された報告書テンプレート（エグゼクティブサマリ、参考文献を含む）
 - 🔍 信頼性の高い情報源の活用と適切な引用管理
-- 📝 HTML/PDF形式での報告書出力対応
+- 📝 HTML/PDF形式での報告書出力対応（日本語LaTeX対応）
 - 🎯 IT技術、法制度、ソフトウェアプロジェクト等の調査に最適化
+- 🚀 ワンライナーセットアップで依存関係を自動インストール
+
+## 必須・推奨ツール
+
+### 必須ツール
+- **Git** - バージョン管理
+- **Pandoc** - ドキュメント変換エンジン
+
+### 推奨ツール（自動セットアップ可能）
+- **Quarto** - 高度なドキュメント生成（オプション）
+- **日本語LaTeX環境** - 高品質な日本語PDF生成
+  - TeX Live (Linux)
+  - MacTeX (macOS)
+  - 日本語フォント (Noto CJK)
+
+### オプションツール
+- **GitHub CLI (gh)** - プロジェクト自動作成に必要
+- **wkhtmltopdf** - HTML経由のPDF生成（LaTeX不使用時）
+
+**📦 全ての依存関係は `scripts/setup.sh` で自動インストール可能です**
 
 ## クイックスタート
 
@@ -40,16 +60,35 @@ GitHubで「Use this template」ボタンをクリックして、新しいリポ
 
 #### 2. 初期設定
 
+##### 🚀 自動セットアップ（推奨）
+
+```bash
+# リポジトリをクローン
+git clone https://github.com/あなたのユーザー名/あなたのリポジトリ名.git
+cd あなたのリポジトリ名
+
+# すべての依存関係を自動インストール
+make setup
+```
+
+**`make setup` が実行する処理:**
+- ✅ Git submoduleの初期化
+- ✅ Pandocのインストール
+- ✅ Quartoのインストール（オプション）
+- ✅ 日本語LaTeX環境の構築（オプション）
+- ✅ その他の依存パッケージ
+
+##### 最小限のセットアップ
+
+Git submoduleのみ初期化する場合：
+
 ```bash
 # リポジトリをクローン
 git clone https://github.com/あなたのユーザー名/あなたのリポジトリ名.git
 cd あなたのリポジトリ名
 
 # AI指示書システムの初期化
-git submodule update --init --recursive
-
-# プロジェクト設定の確認
-cat instructions/PROJECT.md
+make init
 ```
 
 ### 調査開始
@@ -108,9 +147,14 @@ scripts/checkpoint.sh start "調査タスク名" 5
 │   ├── data/                  # データファイル
 │   └── notes/                 # 調査メモ
 ├── scripts/                    # ユーティリティスクリプト
+│   ├── setup.sh               # 環境セットアップ（ワンライナー対応）
 │   ├── checkpoint.sh          # 進捗管理
 │   ├── commit.sh             # クリーンなコミット
 │   ├── build-report.sh       # 報告書ビルド
+│   ├── auto-build.sh         # 自動ビルド
+│   ├── continuous-build.sh   # 継続的ビルド
+│   ├── watch-files.sh        # ファイル監視
+│   ├── check-references.sh   # 引用整合性チェック
 │   └── worktree-manager.sh   # Git worktree管理
 └── output/                    # 生成された報告書（gitignore対象）
     ├── html/
@@ -149,17 +193,62 @@ scripts/checkpoint.sh start "調査タスク名" 5
 
 ## 報告書のビルドとエクスポート
 
-### HTMLレポートの生成
+### クイックスタート（Make経由）
+
+すべてのビルドコマンドは`make`経由で実行できます：
 
 ```bash
+# ヘルプを表示
+make help
+
+# HTMLレポート生成
+make build
+
+# PDFレポート生成（日本語LaTeX対応）
+make build-pdf
+
+# HTML/PDF両方を生成
+make build-all
+
+# 引用整合性チェック
+make check
+
+# 開発モード（自動ビルド + 監視）
+make dev
+
+# 本番モード（完全チェック）
+make prod
+```
+
+### カスタムレポートのビルド
+
+デフォルト以外のレポートをビルドする場合：
+
+```bash
+# カスタムレポートをHTMLビルド
+make build REPORT=reports/my-research.md
+
+# カスタムレポートをPDFビルド
+make build-pdf REPORT=reports/my-research.md OUTPUT=final-report
+
+# 開発モード（カスタムレポート）
+make dev REPORT=reports/my-research.md
+```
+
+### スクリプトを直接使用する場合
+
+```bash
+# HTMLレポート生成
 scripts/build-report.sh html reports/your-report.md
-```
 
-### PDFレポートの生成
-
-```bash
+# PDFレポート生成
 scripts/build-report.sh pdf reports/your-report.md
+
+# 継続的ビルド（開発モード）
+scripts/continuous-build.sh --dev reports/report.md
 ```
+
+詳細は`instructions/PROJECT.md`の「ビルドコマンド」セクション、または`make help`を参照してください。
 
 ## AI指示書の活用
 

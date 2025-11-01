@@ -127,20 +127,43 @@ main() {
     git commit -m "docs: プロジェクト設定を更新 (${project_name})"
     git push origin main
 
-    # 8. 完了メッセージ
+    # 8. セットアップスクリプトの実行確認
+    log_info "依存関係のセットアップを実行しますか？"
+    echo "  これにより以下がインストールされます："
+    echo "  - Pandoc（必須）"
+    echo "  - Quarto（オプション）"
+    echo "  - 日本語LaTeX環境（オプション）"
+    echo ""
+    read -p "セットアップを実行しますか？ (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        log_info "セットアップスクリプトを実行しています..."
+        make setup
+    else
+        log_info "セットアップをスキップしました。後で 'make setup' を実行できます"
+    fi
+
+    # 9. 完了メッセージ
     log_success "プロジェクト '${project_name}' の作成が完了しました！"
     echo ""
     echo "次のステップ:"
     echo "  cd ${project_name}"
+    echo "  make help                    # 利用可能なコマンドを表示"
     echo "  cat instructions/PROJECT.md  # プロジェクト設定を確認"
-    echo "  scripts/checkpoint.sh start \"調査タスク名\" 5  # タスクを開始"
+    echo ""
+    echo "報告書の作成:"
+    echo "  make dev          # 開発モード（自動ビルド + 監視）"
+    echo "  make build        # HTMLビルド"
+    echo "  make build-pdf    # PDFビルド"
+    echo "  make build-all    # HTML/PDF両方を生成"
     echo ""
     echo "GitHubリポジトリ:"
     local github_user=$(gh api user --jq '.login')
     echo "  https://github.com/${github_user}/${project_name}"
     echo ""
-    echo "AI指示書システムの使用方法:"
-    echo "  instructions/ai_instruction_kits/instructions/ja/system/ROOT_INSTRUCTION.md を参照"
+    echo "詳細なドキュメント:"
+    echo "  README.md                                           # プロジェクト全体の説明"
+    echo "  instructions/ai_instruction_kits/...ROOT_INSTRUCTION.md  # AI指示書システム"
 }
 
 # スクリプト実行

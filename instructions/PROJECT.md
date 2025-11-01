@@ -26,6 +26,50 @@ AI指示書システムを活用して、信頼性の高い調査報告書を効
 - チェックポイントスクリプト: `scripts/checkpoint.sh`
 - プロジェクト固有の設定: このファイル（`instructions/PROJECT.md`）
 
+## 環境セットアップ
+
+### 自動セットアップ（推奨）
+
+初回セットアップ時は以下のコマンドで全ての依存関係をインストール：
+
+```bash
+make setup
+```
+
+または、スクリプトを直接実行：
+
+```bash
+scripts/setup.sh
+```
+
+**`make setup` が実行する処理:**
+- Git submodule（AI指示書システム）
+- Pandoc（必須）
+- Quarto（オプション）
+- 日本語LaTeX環境（オプション）
+  - TeX Live / MacTeX
+  - 日本語フォント（Noto CJK）
+
+### 最小限のセットアップ
+
+Git submoduleのみ初期化する場合：
+
+```bash
+make init
+```
+
+### 必須ツール
+
+- **Git** - バージョン管理
+- **Pandoc** - ドキュメント変換エンジン
+- **Make** - ビルド自動化
+
+### 推奨ツール
+
+- **Quarto** - 高度なドキュメント生成
+- **日本語LaTeX環境** - 高品質な日本語PDF生成
+- **GitHub CLI** - プロジェクト自動作成
+
 ## 報告書作成の基本方針
 
 ### 必須要素
@@ -63,34 +107,97 @@ AI指示書システムを活用して、信頼性の高い調査報告書を効
 
 ## ビルドコマンド
 
-### 報告書生成コマンド（必須）
+### Make経由でのビルド（推奨）
+
+すべてのビルドコマンドは`make`経由で実行できます：
+
 ```bash
+# ヘルプを表示
+make help
+
 # HTMLレポート生成（プレビュー用）
-scripts/build-report.sh html reports/report.md
+make build
 
 # PDFレポート生成（配布用）
+make build-pdf
+
+# HTML/PDF両方を生成
+make build-all
+
+# 引用整合性チェック
+make check
+
+# 引用整合性チェック + URL有効性確認
+make check-urls
+
+# 開発モード（自動ビルド + 監視）
+make dev
+
+# 本番モード（完全チェック）
+make prod
+```
+
+### カスタムレポートのビルド
+
+デフォルト以外のレポートをビルドする場合：
+
+```bash
+# カスタムレポートをビルド
+make build REPORT=reports/my-research.md
+
+# 開発モードでカスタムレポート
+make dev REPORT=reports/my-research.md
+```
+
+### スクリプトを直接使用する場合
+
+```bash
+# HTMLレポート生成
+scripts/build-report.sh html reports/report.md
+
+# PDFレポート生成
 scripts/build-report.sh pdf reports/report.md [出力名]
 
-# 引用整合性チェック（URL必須化・相互参照チェック含む）
+# 引用整合性チェック
 scripts/check-references.sh reports/report.md
 
-# URL有効性も含むチェック（推奨）
-scripts/check-references.sh reports/report.md --check-urls
+# 継続的ビルド（開発モード）
+scripts/continuous-build.sh --dev
+
+# 継続的ビルド（本番モード）
+scripts/continuous-build.sh --prod reports/report.md
 ```
 
 ### AIによる自動活用指示
-調査報告書作成タスクでは、以下のスクリプトを必ず活用してください：
 
-1. **執筆段階**: 定期的に`check-references.sh`で引用の整合性を確認
-2. **中間レビュー**: `build-report.sh html`でプレビュー版を生成
-3. **最終確認**: `--check-urls`オプションでオンライン資料の有効性確認
-4. **配布準備**: `build-report.sh pdf`で最終版PDF生成
+調査報告書作成タスクでは、以下のワークフローを推奨します：
+
+1. **執筆段階**: 定期的に`make check`で引用の整合性を確認
+2. **中間レビュー**: `make build`でプレビュー版を生成
+3. **最終確認**: `make check-urls`でオンライン資料の有効性確認
+4. **配布準備**: `make build-pdf`で最終版PDF生成
 
 ### 品質チェック自動化
+
 - 引用番号の連続性確認
 - 参考文献との対応チェック
 - 未使用参考文献の検出
 - リンク切れの自動検出
+
+### 開発ワークフロー
+
+**推奨ワークフロー:**
+
+1. **開発時**: `make dev` で継続的ビルド環境を起動
+   - Markdownファイルを編集するとリアルタイムでHTML生成
+   - ブラウザが自動更新
+   - 引用チェックも自動実行で品質を維持
+
+2. **レビュー時**: `make build-all` で HTML/PDF両方を生成
+   - `make check-urls` でリンク切れも確認
+
+3. **配布準備時**: `make prod` で本番品質チェック
+   - ダッシュボードでビルド統計を確認
 
 ## プロジェクト固有の追加指示
 
