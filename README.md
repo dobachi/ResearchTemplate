@@ -138,6 +138,123 @@ sudo dpkg -i quarto-1.4.549-linux-amd64.deb
 sudo apt-get install texlive-xetex fonts-noto-cjk
 ```
 
+### TeX Live 2025へのアップデート
+
+現在の環境がTeX Live 2023を使用している場合、より高度な日本語組版機能や最新の機能を利用するためにTeX Live 2025にアップデートできます。
+
+> **注意**: 現在のTeX Live 2023環境でも日本語PDF生成は正常に動作します。アップデートは必須ではありません。
+
+#### アップデート手順
+
+<details>
+<summary><strong>Ubuntu/Debian環境でのTeX Live 2025アップデート手順</strong></summary>
+
+```bash
+# 1. 現在のTeX Live環境をバックアップ（オプション）
+which xelatex  # 現在のパスを確認
+xelatex --version  # 現在のバージョンを確認
+
+# 2. 既存のTeX Live環境を削除
+sudo apt remove --purge texlive-* tex-common
+
+# 3. 依存関係をクリーンアップ
+sudo apt autoremove
+sudo apt autoclean
+
+# 4. TeX Live 2025のダウンロードとインストール
+cd /tmp
+wget https://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
+tar -xzf install-tl-unx.tar.gz
+cd install-tl-*
+
+# 5. インストールの実行（管理者権限）
+sudo ./install-tl
+# インストーラーの指示に従って設定
+# 推奨: full schemeを選択（容量が大きいが全機能利用可能）
+
+# 6. パスの設定
+echo 'export PATH=/usr/local/texlive/2025/bin/x86_64-linux:$PATH' >> ~/.bashrc
+echo 'export MANPATH=/usr/local/texlive/2025/texmf-dist/doc/man:$MANPATH' >> ~/.bashrc
+echo 'export INFOPATH=/usr/local/texlive/2025/texmf-dist/doc/info:$INFOPATH' >> ~/.bashrc
+source ~/.bashrc
+
+# 7. 日本語パッケージのインストール
+sudo tlmgr install hyphen-japanese ptex-fonts japanese-otf luatexja
+
+# 8. フォントのインストール（必要な場合）
+sudo apt install fonts-noto-cjk
+
+# 9. 動作確認
+xelatex --version
+tlmgr --version
+
+# 10. Quartoでの動作確認
+quarto render examples/technology-survey.qmd --to pdf
+```
+
+</details>
+
+<details>
+<summary><strong>macOS環境でのTeX Live 2025アップデート手順</strong></summary>
+
+```bash
+# 1. 現在のMacTeX環境を確認
+which xelatex
+xelatex --version
+
+# 2. 新しいMacTeX 2025をダウンロード・インストール
+# https://tug.org/mactex/ から最新版をダウンロード
+# または Homebrew を使用:
+brew install --cask mactex
+
+# 3. 日本語フォントのインストール
+brew install font-noto-sans-cjk-jp
+
+# 4. パスの更新（必要な場合）
+echo 'export PATH=/usr/local/texlive/2025/bin/x86_64-darwin:$PATH' >> ~/.zshrc
+source ~/.zshrc
+
+# 5. 動作確認
+xelatex --version
+quarto render examples/technology-survey.qmd --to pdf
+```
+
+</details>
+
+#### アップデート後の確認
+
+```bash
+# バージョン確認
+xelatex --version  # TeX Live 2025が表示されることを確認
+
+# 日本語PDF生成テスト
+quarto render examples/technology-survey.qmd --to pdf
+
+# 生成されたPDFファイルを確認
+ls -la output/examples/technology-survey.pdf
+```
+
+#### トラブルシューティング
+
+**パッケージが見つからない場合:**
+```bash
+sudo tlmgr update --self
+sudo tlmgr update --all
+sudo tlmgr install <パッケージ名>
+```
+
+**権限エラーが発生する場合:**
+```bash
+sudo tlmgr option autobackup -- -1
+sudo tlmgr option repository ctan
+```
+
+**フォントが見つからない場合:**
+```bash
+# システムフォントキャッシュの更新
+fc-cache -fv
+```
+
 ## プロジェクト構造
 
 ```
