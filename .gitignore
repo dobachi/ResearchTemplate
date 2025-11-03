@@ -80,6 +80,9 @@ private/
 *.cb
 *.cb2
 .*.lb
+*.tex
+*.fdb_latexmk
+*.synctex.gz
 
 # 機密情報
 secrets/
