@@ -26,7 +26,9 @@ help:
 	@echo "  make report-pdf      - reports/内のユーザー報告書をPDFでビルド"
 	@echo ""
 	@echo "【サンプル・デモ】"
-	@echo "  make examples        - examples/内のサンプル報告書をビルド"
+	@echo "  make examples        - examples/内のサンプル報告書をビルド（HTML + PDF）"
+	@echo "  make examples-html   - examples/内のサンプル報告書をHTMLでビルド"
+	@echo "  make examples-pdf    - examples/内のサンプル報告書をPDFでビルド"
 	@echo ""
 	@echo "【配布】"
 	@echo "  make package         - 報告書を配布用パッケージ化（成果物 + ソース）"
@@ -77,10 +79,22 @@ report-pdf:
 # ===============================================
 
 .PHONY: examples
-examples:
-	@echo "📚 examples/内のサンプル報告書をビルド中..."
-	@quarto render examples/ --to html --output-dir $(OUTPUT_DIR)/examples
+examples: examples-html examples-pdf
 	@echo "✅ サンプルビルド完了"
+	@echo "📄 成果物: $(OUTPUT_DIR)/examples/"
+	@ls -lh $(OUTPUT_DIR)/examples/*.{html,pdf} 2>/dev/null || echo "  （ファイルなし）"
+
+.PHONY: examples-html
+examples-html:
+	@echo "📚 examples/内のサンプル報告書をHTMLでビルド中..."
+	@quarto render examples/ --to html --output-dir $(OUTPUT_DIR)/examples
+	@echo "✅ サンプルHTML生成完了"
+
+.PHONY: examples-pdf
+examples-pdf:
+	@echo "📋 examples/内のサンプル報告書をPDFでビルド中..."
+	@quarto render examples/ --to pdf --output-dir $(OUTPUT_DIR)/examples
+	@echo "✅ サンプルPDF生成完了"
 
 # ===============================================
 # 配布用パッケージ作成
