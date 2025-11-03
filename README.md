@@ -92,8 +92,9 @@ ls dist/
 
 ```bash
 make help              # ヘルプ表示
-make report            # 報告書をビルド（HTML + PDF）
-make package           # 配布パッケージ作成
+make report            # 報告書をビルド（HTML + PDF）→ output/
+make examples          # サンプルをビルド（HTML + PDF）→ output/examples/
+make package           # 配布パッケージ作成 → dist/
 make preview           # ライブプレビュー
 make clean             # ビルド成果物削除
 ```

@@ -50,8 +50,8 @@ help:
 .PHONY: report
 report: report-html report-pdf
 	@echo "✅ 報告書ビルド完了"
-	@echo "📄 成果物: $(OUTPUT_DIR)/"
-	@ls -lh $(OUTPUT_DIR)/*.{html,pdf} 2>/dev/null || echo "  （ファイルなし）"
+	@echo "📍 成果物: $(OUTPUT_DIR)/"
+	@find $(OUTPUT_DIR) -maxdepth 1 \( -name "*.html" -o -name "*.pdf" \) -exec ls -lh {} \; 2>/dev/null || echo "  （ファイルなし）"
 
 .PHONY: report-html
 report-html:
@@ -63,6 +63,7 @@ report-html:
 	fi
 	@quarto render reports/ --to html --output-dir $(OUTPUT_DIR)
 	@echo "✅ HTML生成完了"
+	@echo "📍 HTML出力先: $(OUTPUT_DIR)/"
 
 .PHONY: report-pdf
 report-pdf:
@@ -73,6 +74,7 @@ report-pdf:
 	fi
 	@quarto render reports/ --to pdf --output-dir $(OUTPUT_DIR)
 	@echo "✅ PDF生成完了"
+	@echo "📍 PDF出力先: $(OUTPUT_DIR)/"
 
 # ===============================================
 # サンプル報告書のビルド（GitHub Pages表示用）
@@ -81,20 +83,26 @@ report-pdf:
 .PHONY: examples
 examples: examples-html examples-pdf
 	@echo "✅ サンプルビルド完了"
-	@echo "📄 成果物: $(OUTPUT_DIR)/examples/"
-	@ls -lh $(OUTPUT_DIR)/examples/*.{html,pdf} 2>/dev/null || echo "  （ファイルなし）"
+	@echo "📍 成果物: $(OUTPUT_DIR)/examples/"
+	@find $(OUTPUT_DIR)/examples -name "*.html" -o -name "*.pdf" 2>/dev/null | xargs ls -lh 2>/dev/null || echo "  （ファイルなし）"
 
 .PHONY: examples-html
 examples-html:
 	@echo "📚 examples/内のサンプル報告書をHTMLでビルド中..."
-	@quarto render examples/ --to html --output-dir $(OUTPUT_DIR)/examples
+	@mkdir -p $(OUTPUT_DIR)
+	@quarto render examples/ --to html --output-dir $(OUTPUT_DIR)
 	@echo "✅ サンプルHTML生成完了"
+	@echo "📍 HTML出力先: $(OUTPUT_DIR)/examples/"
+	@ls -lh $(OUTPUT_DIR)/examples/*.html 2>/dev/null || echo "  （HTMLファイルなし）"
 
 .PHONY: examples-pdf
 examples-pdf:
 	@echo "📋 examples/内のサンプル報告書をPDFでビルド中..."
-	@quarto render examples/ --to pdf --output-dir $(OUTPUT_DIR)/examples
+	@mkdir -p $(OUTPUT_DIR)
+	@quarto render examples/ --to pdf --output-dir $(OUTPUT_DIR)
 	@echo "✅ サンプルPDF生成完了"
+	@echo "📍 PDF出力先: $(OUTPUT_DIR)/examples/"
+	@ls -lh $(OUTPUT_DIR)/examples/*.pdf 2>/dev/null || echo "  （PDFファイルなし）"
 
 # ===============================================
 # 配布用パッケージ作成

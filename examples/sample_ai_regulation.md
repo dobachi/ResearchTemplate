@@ -1,3 +1,28 @@
+---
+title: "AI規制の国際動向に関する調査報告書"
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+  pdf:
+    documentclass: scrbook
+    toc: true
+    number-sections: true
+    geometry: margin=2cm
+    mainfont: "Noto Sans CJK JP"
+    pdf-engine: xelatex
+    include-in-header:
+      - text: |
+          \usepackage{fontspec}
+          \setmainfont{Noto Sans CJK JP}
+          % 日本語改行設定（TeX Live 2023対応）
+          \XeTeXlinebreaklocale "ja"
+          \XeTeXlinebreakskip = 0pt plus 1pt minus 0pt
+          \tolerance=1000
+          \emergencystretch=3em
+---
+
 # AI規制の国際動向に関する調査報告書
 
 ## エグゼクティブサマリ
