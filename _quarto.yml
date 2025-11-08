@@ -58,6 +58,11 @@ format:
     mainfont: "Noto Sans CJK JP"
     pdf-engine: xelatex
 
+  docx:
+    toc: true
+    number-sections: true
+    highlight-style: github
+
 bibliography: sources/references/bibliography.bib
 
 crossref:

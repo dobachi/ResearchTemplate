@@ -60,11 +60,44 @@ jobs:
         quarto render
         echo "✅ Build complete"
 
+    - name: Build PDF and DOCX formats
+      run: |
+        echo "📄 Building PDF and DOCX formats for examples..."
+        mkdir -p output/downloads
+
+        # examples配下の各.qmdファイルをPDF/DOCX形式でレンダリング
+        for qmd_file in examples/*.qmd; do
+          if [ -f "$qmd_file" ]; then
+            echo "Processing $qmd_file..."
+            base_name=$(basename "$qmd_file" .qmd)
+
+            # PDF生成
+            echo "  Generating PDF..."
+            quarto render "$qmd_file" --to pdf --output "output/downloads/${base_name}.pdf"
+
+            # DOCX生成
+            echo "  Generating DOCX..."
+            quarto render "$qmd_file" --to docx --output "output/downloads/${base_name}.docx"
+          fi
+        done
+
+        echo "✅ PDF/DOCX generation complete"
+
     - name: List output
       run: |
         echo "Generated files:"
         ls -la output/
-        find output/ -type f | head -20
+        echo ""
+        echo "Downloads directory:"
+        ls -la output/downloads/ || echo "No downloads directory"
+        find output/ -type f | head -30
+
+    - name: Upload PDF/DOCX artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: reports-pdf-docx
+        path: output/downloads/
+        retention-days: 90
 
     - name: Setup Pages
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -92,5 +125,29 @@ jobs:
         echo "- Top page: index.html" >> $GITHUB_STEP_SUMMARY
         echo "- Examples: examples/" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📄 Downloads (Artifacts)" >> $GITHUB_STEP_SUMMARY
+        echo "PDF and DOCX files are available as artifacts:" >> $GITHUB_STEP_SUMMARY
+        echo "- Artifact name: \`reports-pdf-docx\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Retention: 90 days" >> $GITHUB_STEP_SUMMARY
+        echo "- Files:" >> $GITHUB_STEP_SUMMARY
+        ls output/downloads/ | while read file; do
+          echo "  - $file" >> $GITHUB_STEP_SUMMARY
+        done
+        echo "" >> $GITHUB_STEP_SUMMARY
         echo "### 📝 Note" >> $GITHUB_STEP_SUMMARY
         echo "This is a template repository. Users fork and create their reports in reports/ directory." >> $GITHUB_STEP_SUMMARY
+
+    - name: Generate build summary for PRs and other events
+      if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+      run: |
+        echo "## 📊 Build Results" >> $GITHUB_STEP_SUMMARY
+        echo "- Status: ✅ Success" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📄 Downloads (Artifacts)" >> $GITHUB_STEP_SUMMARY
+        echo "PDF and DOCX files are available as artifacts:" >> $GITHUB_STEP_SUMMARY
+        echo "- Artifact name: \`reports-pdf-docx\`" >> $GITHUB_STEP_SUMMARY
+        echo "- Retention: 90 days" >> $GITHUB_STEP_SUMMARY
+        echo "- Files:" >> $GITHUB_STEP_SUMMARY
+        ls output/downloads/ | while read file; do
+          echo "  - $file" >> $GITHUB_STEP_SUMMARY
+        done
