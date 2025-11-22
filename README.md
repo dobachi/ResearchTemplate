@@ -115,7 +115,8 @@ make clean             # ビルド成果物削除
 
 ### 推奨（PDF生成用）
 
-- XeLaTeX
+- LuaLaTeX（日本語PDF対応）
+- luatexja（日本語組版パッケージ）
 - Noto Sans CJK JP フォント（日本語対応）
 
 ### 🚀 自動インストール（推奨）
@@ -136,7 +137,7 @@ wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.4.549/quarto-
 sudo dpkg -i quarto-1.4.549-linux-amd64.deb
 
 # LaTeX + フォント（PDF生成用）
-sudo apt-get install texlive-xetex fonts-noto-cjk
+sudo apt-get install texlive-luatex texlive-lang-japanese fonts-noto-cjk
 ```
 
 ### TeX Live 2025へのアップデート
@@ -152,8 +153,8 @@ sudo apt-get install texlive-xetex fonts-noto-cjk
 
 ```bash
 # 1. 現在のTeX Live環境をバックアップ（オプション）
-which xelatex  # 現在のパスを確認
-xelatex --version  # 現在のバージョンを確認
+which lualatex  # 現在のパスを確認
+lualatex --version  # 現在のバージョンを確認
 
 # 2. 既存のTeX Live環境を削除
 sudo apt remove --purge texlive-* tex-common
@@ -186,7 +187,7 @@ sudo tlmgr install hyphen-japanese ptex-fonts japanese-otf luatexja
 sudo apt install fonts-noto-cjk
 
 # 9. 動作確認
-xelatex --version
+lualatex --version
 tlmgr --version
 
 # 10. Quartoでの動作確認
@@ -200,8 +201,8 @@ quarto render examples/technology-survey.qmd --to pdf
 
 ```bash
 # 1. 現在のMacTeX環境を確認
-which xelatex
-xelatex --version
+which lualatex
+lualatex --version
 
 # 2. 新しいMacTeX 2025をダウンロード・インストール
 # https://tug.org/mactex/ から最新版をダウンロード
@@ -216,7 +217,7 @@ echo 'export PATH=/usr/local/texlive/2025/bin/x86_64-darwin:$PATH' >> ~/.zshrc
 source ~/.zshrc
 
 # 5. 動作確認
-xelatex --version
+lualatex --version
 quarto render examples/technology-survey.qmd --to pdf
 ```
 
@@ -226,7 +227,7 @@ quarto render examples/technology-survey.qmd --to pdf
 
 ```bash
 # バージョン確認
-xelatex --version  # TeX Live 2025が表示されることを確認
+lualatex --version  # TeX Live 2025が表示されることを確認
 
 # 日本語PDF生成テスト
 quarto render examples/technology-survey.qmd --to pdf

@@ -236,7 +236,8 @@ mainブランチへのpush時に自動実行：
 
 ### 推奨（PDF生成用）
 
-- XeLaTeX
+- LuaLaTeX（日本語PDF対応）
+- luatexja（日本語組版パッケージ）
 - Noto Sans CJK JP フォント（日本語対応）
 
 ### 🚀 自動インストール（推奨）
@@ -266,7 +267,7 @@ wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.4.549/quarto-
 sudo dpkg -i quarto-1.4.549-linux-amd64.deb
 
 # LaTeX + フォント（PDF生成用）
-sudo apt-get install texlive-xetex fonts-noto-cjk
+sudo apt-get install texlive-luatex texlive-lang-japanese fonts-noto-cjk
 ```
 
 ## 技術スタック

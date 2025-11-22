@@ -6,35 +6,7 @@ author:
     affiliation: サンプル組織
     email: sample@example.com
 date: today
-format:
-  html:
-    toc: true
-    toc-depth: 3
-    number-sections: true
-    theme: journal
-  pdf:
-    documentclass: scrbook
-    toc: true
-    number-sections: true
-    geometry: margin=2cm
-    mainfont: "Noto Sans CJK JP"
-    pdf-engine: xelatex
-    include-in-header:
-      - text: |
-          \usepackage{fontspec}
-          \setmainfont{Noto Sans CJK JP}
-          % 日本語改行設定（TeX Live 2023対応）
-          \XeTeXlinebreaklocale "ja"
-          \XeTeXlinebreakskip = 0pt plus 1pt minus 0pt
-          \tolerance=1000
-          \emergencystretch=3em
 bibliography: ../sources/references/bibliography.bib
-crossref:
-  fig-title: "図"
-  tbl-title: "表"
-  title-delim: ":"
-  fig-prefix: "図"
-  tbl-prefix: "表"
 ---
 
 # エグゼクティブサマリ {.unnumbered}

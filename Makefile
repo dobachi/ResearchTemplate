@@ -110,81 +110,231 @@ examples-pdf:
 
 .PHONY: package
 package:
-	@echo "📦 報告書配布パッケージ作成中..."
+	@echo "📦 Quartoビルド可能な配布パッケージ作成中..."
 	@
-	@# ビルド成果物の存在確認
-	@if [ ! -d "$(OUTPUT_DIR)" ] || [ -z "$$(ls -A $(OUTPUT_DIR) 2>/dev/null)" ]; then \
-		echo "⚠️  成果物がありません。先に 'make report' を実行してください"; \
-		exit 1; \
-	fi
+	@# ディレクトリ構造を作成
+	@mkdir -p $(DIST_DIR)/package/templates/styles
+	@mkdir -p $(DIST_DIR)/package/sources/references
+	@mkdir -p $(DIST_DIR)/package/sources/diagrams
+	@mkdir -p $(DIST_DIR)/package/reports
+	@mkdir -p $(DIST_DIR)/package/scripts
 	@
-	@mkdir -p $(DIST_DIR)/package/formats
-	@mkdir -p $(DIST_DIR)/package/sources
-	@mkdir -p $(DIST_DIR)/package/references
-	@mkdir -p $(DIST_DIR)/package/diagrams
+	@# Quarto設定ファイルを生成（パッケージ用に調整）
+	@echo "  - Quarto設定ファイルを生成中..."
+	@echo "project:" > $(DIST_DIR)/package/_quarto.yml
+	@echo "  output-dir: output" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "format:" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "  html:" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    theme:" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "      - journal" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "      - templates/styles/custom.scss" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    toc: true" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    toc-depth: 3" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    number-sections: true" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    code-fold: true" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    css: templates/styles/report-style.css" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    link-external-newwindow: true" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "  pdf:" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    documentclass: ltjsbook" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    toc: true" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    number-sections: true" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    geometry: margin=2cm" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    pdf-engine: lualatex" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    include-in-header:" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "      - text: |" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "          \\usepackage{luatexja-fontspec}" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "          \\setmainjfont{Noto Sans CJK JP}" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "  docx:" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    toc: true" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    number-sections: true" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "    highlight-style: github" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "bibliography: sources/references/bibliography.bib" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "crossref:" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "  fig-title: \"図\"" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "  tbl-title: \"表\"" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "  title-delim: \":\"" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "  fig-prefix: \"図\"" >> $(DIST_DIR)/package/_quarto.yml
+	@echo "  tbl-prefix: \"表\"" >> $(DIST_DIR)/package/_quarto.yml
 	@
-	@# 成果物をコピー
-	@echo "  - 成果物をコピー中..."
-	@find $(OUTPUT_DIR) -maxdepth 1 -name '*.html' -exec cp {} $(DIST_DIR)/package/formats/ \; 2>/dev/null || true
-	@find $(OUTPUT_DIR) -maxdepth 1 -name '*.pdf' -exec cp {} $(DIST_DIR)/package/formats/ \; 2>/dev/null || true
-	@find $(OUTPUT_DIR) -maxdepth 1 -name '*.epub' -exec cp {} $(DIST_DIR)/package/formats/ \; 2>/dev/null || true
-	@cp -r $(OUTPUT_DIR)/site_libs $(DIST_DIR)/package/formats/ 2>/dev/null || true
-	@cp -r $(OUTPUT_DIR)/search.json $(DIST_DIR)/package/formats/ 2>/dev/null || true
-	@
-	@# 画像ファイルをコピー（*_files/ディレクトリ）
-	@echo "  - 画像ファイルをコピー中..."
-	@find $(OUTPUT_DIR) -maxdepth 1 -type d -name '*_files' -exec cp -r {} $(DIST_DIR)/package/formats/ \; 2>/dev/null || true
-	@find $(OUTPUT_DIR) -maxdepth 1 \( -name '*.png' -o -name '*.jpg' -o -name '*.jpeg' -o -name '*.svg' -o -name '*.gif' \) -exec cp {} $(DIST_DIR)/package/formats/ \; 2>/dev/null || true
-	@
-	@# ソースをコピー
-	@echo "  - ソースファイルをコピー中..."
-	@find reports -name '*.qmd' -not -name 'README.md' -exec cp {} $(DIST_DIR)/package/sources/ \; 2>/dev/null || true
+	@# テンプレートとスタイルをコピー
+	@echo "  - テンプレートとスタイルをコピー中..."
+	@cp templates/report_template.qmd $(DIST_DIR)/package/templates/ 2>/dev/null || true
+	@cp -r templates/styles/* $(DIST_DIR)/package/templates/styles/ 2>/dev/null || true
 	@
 	@# 参考文献をコピー
 	@echo "  - 参考文献をコピー中..."
-	@cp sources/references/*.bib $(DIST_DIR)/package/references/ 2>/dev/null || true
+	@cp sources/references/*.bib $(DIST_DIR)/package/sources/references/ 2>/dev/null || true
 	@
 	@# 図表ソースをコピー
 	@echo "  - 図表ソースをコピー中..."
-	@cp -r sources/diagrams/* $(DIST_DIR)/package/diagrams/ 2>/dev/null || true
+	@cp -r sources/diagrams/* $(DIST_DIR)/package/sources/diagrams/ 2>/dev/null || true
+	@
+	@# 報告書ソースをコピー（reports/ または examples/）
+	@echo "  - 報告書ソースをコピー中..."
+	@if [ -n "$$(find reports -name '*.qmd' -not -name 'README.md' 2>/dev/null)" ]; then \
+		find reports -name '*.qmd' -not -name 'README.md' -exec cp {} $(DIST_DIR)/package/reports/ \; 2>/dev/null || true; \
+		echo "    reports/からコピーしました"; \
+	else \
+		find examples -name '*.qmd' -exec cp {} $(DIST_DIR)/package/reports/ \; 2>/dev/null || true; \
+		echo "    examples/からコピーしました（サンプル）"; \
+	fi
+	@
+	@# ビルドスクリプトをコピー
+	@echo "  - ビルドスクリプトをコピー中..."
+	@cp scripts/build-quarto.sh $(DIST_DIR)/package/scripts/ 2>/dev/null || true
+	@cp scripts/setup-quarto.sh $(DIST_DIR)/package/scripts/ 2>/dev/null || true
+	@chmod +x $(DIST_DIR)/package/scripts/*.sh 2>/dev/null || true
+	@
+	@# Makefileをコピー（簡易版）
+	@echo "  - Makefileをコピー中..."
+	@cp Makefile $(DIST_DIR)/package/
 	@
 	@# READMEを生成
 	@echo "  - READMEを生成中..."
-	@echo "# 調査報告書パッケージ" > $(DIST_DIR)/package/README.md
+	@echo "# 調査報告書パッケージ（Quarto版）" > $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "このパッケージはQuartoでビルド可能な調査報告書のソースと設定ファイル一式です。" >> $(DIST_DIR)/package/README.md
 	@echo "" >> $(DIST_DIR)/package/README.md
 	@echo "生成日時: $$(date '+%Y-%m-%d %H:%M:%S')" >> $(DIST_DIR)/package/README.md
 	@echo "" >> $(DIST_DIR)/package/README.md
-	@echo "## 📁 内容" >> $(DIST_DIR)/package/README.md
+	@echo "## 📁 ディレクトリ構造" >> $(DIST_DIR)/package/README.md
 	@echo "" >> $(DIST_DIR)/package/README.md
-	@echo "- \`formats/\`: 閲覧用ファイル（HTML/PDF/EPUB）" >> $(DIST_DIR)/package/README.md
-	@echo "- \`sources/\`: 報告書ソースファイル（.qmd）" >> $(DIST_DIR)/package/README.md
-	@echo "- \`references/\`: 参考文献データベース（.bib）" >> $(DIST_DIR)/package/README.md
-	@echo "- \`diagrams/\`: 図表ソースファイル（Mermaid/PlantUML等）" >> $(DIST_DIR)/package/README.md
-	@echo "" >> $(DIST_DIR)/package/README.md
-	@echo "## 📄 閲覧方法" >> $(DIST_DIR)/package/README.md
-	@echo "" >> $(DIST_DIR)/package/README.md
-	@echo "### HTML" >> $(DIST_DIR)/package/README.md
-	@echo "- **重要**: HTMLを閲覧する場合は、\`formats/\`ディレクトリ全体を保持してください" >> $(DIST_DIR)/package/README.md
-	@echo "- \`formats/\`内の\`.html\`ファイルをブラウザで開く" >> $(DIST_DIR)/package/README.md
-	@echo "- \`site_libs/\`と\`search.json\`に依存しています" >> $(DIST_DIR)/package/README.md
-	@echo "" >> $(DIST_DIR)/package/README.md
-	@echo "### PDF" >> $(DIST_DIR)/package/README.md
-	@echo "- \`formats/\`内の\`.pdf\`ファイルを開く" >> $(DIST_DIR)/package/README.md
-	@echo "" >> $(DIST_DIR)/package/README.md
-	@echo "## 🔧 再ビルド方法" >> $(DIST_DIR)/package/README.md
-	@echo "" >> $(DIST_DIR)/package/README.md
-	@echo "1. Quartoをインストール: https://quarto.org/docs/get-started/" >> $(DIST_DIR)/package/README.md
-	@echo "2. 日本語PDF生成の場合、XeLaTeX + Noto Fontsが必要" >> $(DIST_DIR)/package/README.md
-	@echo "3. ソースファイルをビルド:" >> $(DIST_DIR)/package/README.md
-	@echo "" >> $(DIST_DIR)/package/README.md
-	@echo "\`\`\`bash" >> $(DIST_DIR)/package/README.md
-	@echo "quarto render sources/*.qmd --to html" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "." >> $(DIST_DIR)/package/README.md
+	@echo "├── README.md              # このファイル" >> $(DIST_DIR)/package/README.md
+	@echo "├── _quarto.yml            # Quarto設定ファイル" >> $(DIST_DIR)/package/README.md
+	@echo "├── Makefile               # ビルドコマンド" >> $(DIST_DIR)/package/README.md
+	@echo "├── templates/             # テンプレート" >> $(DIST_DIR)/package/README.md
+	@echo "│   ├── report_template.qmd # 報告書テンプレート" >> $(DIST_DIR)/package/README.md
+	@echo "│   └── styles/            # スタイルファイル" >> $(DIST_DIR)/package/README.md
+	@echo "├── sources/               # 資料" >> $(DIST_DIR)/package/README.md
+	@echo "│   ├── references/        # 参考文献（.bib）" >> $(DIST_DIR)/package/README.md
+	@echo "│   └── diagrams/          # 図表ソース" >> $(DIST_DIR)/package/README.md
+	@echo "├── reports/               # 報告書ソース（.qmd）" >> $(DIST_DIR)/package/README.md
+	@echo "└── scripts/               # ビルドスクリプト" >> $(DIST_DIR)/package/README.md
 	@echo "\`\`\`" >> $(DIST_DIR)/package/README.md
 	@echo "" >> $(DIST_DIR)/package/README.md
-	@echo "## 📚 参考" >> $(DIST_DIR)/package/README.md
+	@echo "## 🚀 クイックスタート" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "### 1. 環境セットアップ" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "セットアップスクリプトを使用（推奨）：" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "bash scripts/setup-quarto.sh" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "手動セットアップ：" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "**Quartoのインストール**" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "- Ubuntu/Debian: \`sudo apt install quarto\`" >> $(DIST_DIR)/package/README.md
+	@echo "- macOS: \`brew install quarto\`" >> $(DIST_DIR)/package/README.md
+	@echo "- その他: https://quarto.org/docs/get-started/" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "**日本語PDF生成のための追加パッケージ**" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "- Ubuntu/Debian:" >> $(DIST_DIR)/package/README.md
+	@echo "  \`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "  sudo apt install texlive-xetex fonts-noto-cjk" >> $(DIST_DIR)/package/README.md
+	@echo "  \`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "- macOS:" >> $(DIST_DIR)/package/README.md
+	@echo "  \`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "  brew install --cask mactex" >> $(DIST_DIR)/package/README.md
+	@echo "  brew install font-noto-sans-cjk-jp" >> $(DIST_DIR)/package/README.md
+	@echo "  \`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "### 2. ビルド実行" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "**Makeを使用（簡単）：**" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "make report          # HTML + PDF" >> $(DIST_DIR)/package/README.md
+	@echo "make report-html     # HTMLのみ" >> $(DIST_DIR)/package/README.md
+	@echo "make report-pdf      # PDFのみ" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "**Quartoコマンド直接実行：**" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "# HTML生成" >> $(DIST_DIR)/package/README.md
+	@echo "quarto render reports/ --to html --output-dir output" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "# PDF生成" >> $(DIST_DIR)/package/README.md
+	@echo "quarto render reports/ --to pdf --output-dir output" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "# DOCX生成" >> $(DIST_DIR)/package/README.md
+	@echo "quarto render reports/ --to docx --output-dir output" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "**ビルドスクリプト使用：**" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "bash scripts/build-quarto.sh                # 全形式" >> $(DIST_DIR)/package/README.md
+	@echo "bash scripts/build-quarto.sh --format html  # HTML" >> $(DIST_DIR)/package/README.md
+	@echo "bash scripts/build-quarto.sh --format pdf   # PDF" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "### 3. プレビュー" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "リアルタイムプレビュー：" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "quarto preview reports/" >> $(DIST_DIR)/package/README.md
+	@echo "# または" >> $(DIST_DIR)/package/README.md
+	@echo "make preview" >> $(DIST_DIR)/package/README.md
+	@echo "\`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "## 📝 報告書の作成・編集" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "1. テンプレートをコピー：" >> $(DIST_DIR)/package/README.md
+	@echo "   \`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "   cp templates/report_template.qmd reports/my-report.qmd" >> $(DIST_DIR)/package/README.md
+	@echo "   \`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "2. エディタで編集：" >> $(DIST_DIR)/package/README.md
+	@echo "   \`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "   vim reports/my-report.qmd" >> $(DIST_DIR)/package/README.md
+	@echo "   \`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "3. ビルド：" >> $(DIST_DIR)/package/README.md
+	@echo "   \`\`\`bash" >> $(DIST_DIR)/package/README.md
+	@echo "   make report" >> $(DIST_DIR)/package/README.md
+	@echo "   \`\`\`" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "## 🔧 カスタマイズ" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "### スタイルのカスタマイズ" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "- \`templates/styles/custom.scss\`: 全体のテーマ" >> $(DIST_DIR)/package/README.md
+	@echo "- \`templates/styles/report-style.css\`: レポート固有のスタイル" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "### Quarto設定の変更" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "\`_quarto.yml\`を編集して以下を調整可能：" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "- 出力形式（HTML、PDF、DOCX等）" >> $(DIST_DIR)/package/README.md
+	@echo "- 目次の表示設定" >> $(DIST_DIR)/package/README.md
+	@echo "- 番号付けの設定" >> $(DIST_DIR)/package/README.md
+	@echo "- フォント設定（PDF）" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "## 📚 参考資料" >> $(DIST_DIR)/package/README.md
 	@echo "" >> $(DIST_DIR)/package/README.md
 	@echo "- [Quarto公式ドキュメント](https://quarto.org)" >> $(DIST_DIR)/package/README.md
-	@echo "- [ResearchTemplate](https://github.com/dobachi/ResearchTemplate)" >> $(DIST_DIR)/package/README.md
+	@echo "- [Quarto日本語ガイド](https://quarto.org/docs/guides/)" >> $(DIST_DIR)/package/README.md
+	@echo "- [ResearchTemplate GitHub](https://github.com/dobachi/ResearchTemplate)" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "## ⚠️ 注意事項" >> $(DIST_DIR)/package/README.md
+	@echo "" >> $(DIST_DIR)/package/README.md
+	@echo "- このパッケージはQuartoビルド専用です" >> $(DIST_DIR)/package/README.md
+	@echo "- AI指示書システムは含まれていません" >> $(DIST_DIR)/package/README.md
+	@echo "- 完全な機能が必要な場合は元のリポジトリを参照してください" >> $(DIST_DIR)/package/README.md
 	@
 	@# ZIP圧縮
 	@echo "  - アーカイブを作成中..."
