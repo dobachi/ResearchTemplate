@@ -118,3 +118,5 @@ templates/*_files/
 examples/*.html
 examples/*.pdf
 examples/*_files/
+
+**/*.quarto_ipynb

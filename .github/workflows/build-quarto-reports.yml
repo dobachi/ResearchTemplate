@@ -57,6 +57,9 @@ jobs:
     - name: Build website
       run: |
         echo "📚 Building examples and website..."
+        # index.qmdを個別にビルド（シンボリックリンクの問題を回避）
+        quarto render index.qmd --output-dir output
+        # examples/とtemplates/README.mdをビルド
         quarto render
         echo "✅ Build complete"
 

@@ -6,6 +6,21 @@ author:
     affiliation: サンプル組織
     email: sample@example.com
 date: today
+lang: ja
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    theme: journal
+  pdf:
+    documentclass: scrbook
+    toc: true
+    number-sections: true
+    geometry: margin=2cm
+    mainfont: "Noto Sans CJK JP"
+    pdf-engine: xelatex
+  docx: default
 bibliography: ../sources/references/bibliography.bib
 ---
 
@@ -88,6 +103,14 @@ def hello_world():
 3. バージョン管理が容易
 
 ## 高度な機能
+
+### 図の挿入
+
+Quartoでは画像を簡単に挿入し、キャプションと相互参照を付けることができます。
+
+![Quartoのロゴ。科学技術出版のためのオープンソースシステムを象徴しています。](https://quarto.org/quarto.png){#fig-quarto-logo}
+
+@fig-quarto-logo に示すように、Quartoは視覚的にも分かりやすいブランディングを持っています。
 
 ### 相互参照
 

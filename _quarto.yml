@@ -1,10 +1,12 @@
 project:
   type: website
   output-dir: output
+  post-render:
+    - python3 scripts/fix-docx-figures.py
   render:
-    - "index.qmd"
     - "examples/"
     - "templates/README.md"
+    - "!index.qmd"
     - "!templates/*.qmd"
     - "!reports/"
     - "!sources/"
@@ -12,6 +14,7 @@ project:
     - "!instructions/"
     - "!CLAUDE*.md"
     - "!CURSOR*.md"
+    - "!GEMINI*.md"
 
 website:
   title: "ResearchTemplate"
@@ -64,6 +67,8 @@ format:
     toc: true
     number-sections: true
     highlight-style: github
+
+  docx: default
 
 bibliography: sources/references/bibliography.bib
 
