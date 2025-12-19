@@ -120,3 +120,4 @@ examples/*.pdf
 examples/*_files/
 
 **/*.quarto_ipynb
+.gemini/
