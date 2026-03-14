@@ -3,7 +3,6 @@ instructions/ai_instruction_kits/
 
 # AIツール設定
 .openhands/
-.claude/
 
 # Git worktree directories
 .gitworktrees/

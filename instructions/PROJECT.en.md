@@ -2,6 +2,9 @@
 
 This project uses the AI instruction system in `instructions/ai_instruction_kits/`.
 Please load `instructions/ai_instruction_kits/instructions/en/system/ROOT_INSTRUCTION.md` when starting a task.
+ROOT_INSTRUCTION.md is a skill orchestrator. Check installed skills in `.claude/skills/` and use them according to the task.
+
+Skill Marketplace: https://github.com/dobachi/AI_Instruction_Kits/tree/main/templates/claude-skills
 
 ## Project Settings
 - Language: English (en)
