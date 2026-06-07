@@ -16,9 +16,7 @@ ROOT_INSTRUCTION.mdはスキルオーケストレーターです。`.claude/skil
 - **対象分野**: IT技術、法制度、ソフトウェアプロジェクト等
 - **言語**: 日本語（英語版も対応可）
 - **出力形式**: HTML, PDF, Markdown
-- **チェックポイント管理**: 有効
-- **チェックポイントスクリプト**: scripts/checkpoint.sh
-- **ログファイル**: checkpoint.log
+- **タスク管理・進捗追跡・worktree・ビルドはAIツールのネイティブ機能を利用**
 
 ## 重要なパス
 
@@ -26,7 +24,6 @@ ROOT_INSTRUCTION.mdはスキルオーケストレーターです。`.claude/skil
 - 報告書テンプレート: `reports/templates/`
 - 調査資料: `sources/`
 - 出力先: `output/`
-- チェックポイントスクリプト: `scripts/checkpoint.sh`
 - プロジェクト固有の設定: このファイル（`instructions/PROJECT.md`）
 
 ## 報告書作成の基本方針

@@ -25,7 +25,6 @@ Thumbs.db
 
 # ログファイル
 *.log
-checkpoint.log
 
 # IDE設定
 .vscode/

@@ -1,1 +1,0 @@
-../instructions/ai_instruction_kits/scripts/worktree-manager.sh

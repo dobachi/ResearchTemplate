@@ -8,13 +8,10 @@ Skill Marketplace: https://github.com/dobachi/AI_Instruction_Kits/tree/main/temp
 
 ## Project Settings
 - Language: English (en)
-- Checkpoint Management: Enabled
-- Checkpoint Script: scripts/checkpoint.sh
-- Log File: checkpoint.log
+- Use your AI tool's native features for task management, progress tracking, worktrees, and builds.
 
 ## Important Paths
 - AI Instruction System: `instructions/ai_instruction_kits/`
-- Checkpoint Script: `scripts/checkpoint.sh`
 - Project-Specific Configuration: This file (`instructions/PROJECT.en.md`)
 
 ## Commit Rules

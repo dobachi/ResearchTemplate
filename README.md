@@ -290,7 +290,7 @@ git submodule update --init --recursive
 **使い方**:
 - AIツールは自動的に`CLAUDE.md`や`CURSOR.md`を読み込みます
 - プロジェクト固有の指示は`instructions/PROJECT.md`を参照
-- チェックポイント機能: `scripts/checkpoint.sh`で作業履歴を記録
+- タスク管理・進捗追跡・worktree・ビルドはAIツールのネイティブ機能を利用
 
 詳細は[CLAUDE.md](CLAUDE.md)を参照してください。
 
