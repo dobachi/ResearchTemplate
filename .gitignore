@@ -120,3 +120,4 @@ examples/*_files/
 **/*.quarto_ipynb
 .gemini/
 .codex/
+.claude/
