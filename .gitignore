@@ -121,3 +121,4 @@ examples/*_files/
 .gemini/
 .codex/
 .claude/
+.migration-backup/
