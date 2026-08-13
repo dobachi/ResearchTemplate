@@ -33,6 +33,9 @@ help:
 	@echo "【配布】"
 	@echo "  make package         - 報告書を配布用パッケージ化（成果物 + ソース）"
 	@echo ""
+	@echo "【環境】"
+	@echo "  make check-env       - 必要なツールが揃っているか確認"
+	@echo ""
 	@echo "【開発・プレビュー】"
 	@echo "  make preview         - ライブプレビュー起動"
 	@echo "  make clean           - ビルド成果物を削除"
@@ -379,3 +382,13 @@ $(OUTPUT_DIR):
 
 $(DIST_DIR):
 	@mkdir -p $(DIST_DIR)
+
+# ===============================================
+# 環境チェック
+# ===============================================
+
+# 不足しているツールを列挙し、終了コードで返す。
+# scripts/check-env.sh はテンプレート由来の同梱物（正本は ResearchTemplate）。
+.PHONY: check-env
+check-env:
+	@bash scripts/check-env.sh

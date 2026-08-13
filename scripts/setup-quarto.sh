@@ -24,6 +24,12 @@ parse_arguments() {
                 FORCE_INSTALL=true
                 shift
                 ;;
+            --legacy)
+                # Debian/Ubuntu で ansible-miscs を使わず、このスクリプトの
+                # 旧来の apt 導入を使う（日本語 TeX は含まれない）
+                LEGACY_MODE=true
+                shift
+                ;;
             --version)
                 QUARTO_VERSION="$2"
                 shift 2
@@ -97,6 +103,35 @@ detect_os() {
     fi
 
     echo -e "${BLUE}検出されたOS: $OS${NC}"
+}
+
+# Debian/Ubuntu では汎用のツール導入を ansible-miscs に一本化している。
+# ここで apt を直接叩くと、TeX の導入経路が二重になり
+# （tinytex / ansible の texlive / このスクリプト）、パッケージ探索と
+# フォント解決が食い違う。「このマシンでは通るが別マシンで落ちる」の原因になる。
+delegate_to_ansible() {
+    cat <<'MSG'
+
+Debian/Ubuntu（WSL を含む）では、ツールの導入は ansible-miscs に集約しています。
+日本語 PDF に必要な texlive-lang-japanese・Noto CJK・kanji-config まで含めて、
+1 コマンドで揃います（このスクリプトの旧来の apt 導入には日本語 TeX が入りません）。
+
+  git clone https://github.com/dobachi/ansible-miscs
+  cd ansible-miscs
+  ansible-playbook -i hosts playbooks/conf/linux/doc_authoring.yml \
+    -e server=localhost --connection=local -K
+
+入るもの: Quarto / TeX Live（日本語込み）/ Node.js / mermaid-cli /
+          rsvg-convert / Noto CJK フォント
+
+揃ったかどうかは次で確認できます:
+
+  make check-env
+
+旧来の apt 直叩きを使いたい場合は --legacy を付けて再実行してください
+（日本語 PDF は別途 texlive-lang-japanese と fonts-noto-cjk が要ります）。
+
+MSG
 }
 
 # Quartoの存在確認
@@ -309,6 +344,12 @@ main() {
 
     # OS検出
     detect_os
+
+    # Debian/Ubuntu は ansible-miscs へ委譲する（--legacy で従来動作）
+    if [ "$OS" = "ubuntu" ] && [ "${LEGACY_MODE:-false}" != "true" ]; then
+        delegate_to_ansible
+        return 0
+    fi
 
     # 既存インストールの確認
     if ! check_quarto_installation; then
