@@ -1,3 +1,6 @@
 [submodule "instructions/ai_instruction_kits"]
 	path = instructions/ai_instruction_kits
 	url = https://github.com/dobachi/AI_Instruction_Kits.git
+[submodule "scripts/common"]
+	path = scripts/common
+	url = https://github.com/dobachi/doc-project-common.git

@@ -74,8 +74,19 @@ PY_MODULES=("pptx|pptx を読む場合のみ")
 ```
 
 **社内固有・非公開の事情はここ（各プロジェクトのリポジトリ）に書くこと。**
-`scripts/check-env.sh` は公開テンプレート由来の同梱物で、派生先で編集しても
-次の取り込みで失われる。
+検証器の実体は公開リポジトリ
+[doc-project-common](https://github.com/dobachi/doc-project-common) にあり、
+submodule として `scripts/common` に取り込まれている。取り込み先で編集しても
+上流には戻らないので、直すときは正本を直す。
+
+```bash
+# clone するとき
+git clone --recursive <このプロジェクトのURL>
+# すでに clone 済みで scripts/common が空のとき
+git submodule update --init --recursive
+# 共通スクリプトを新しくするとき（勝手には上がらない）
+git submodule update --remote scripts/common
+```
 
 資材の置き場所を書くときは、**端末ごとに変わる絶対パスを書かない。**
 共有ストレージの同期先はユーザ名やアカウントで変わるため、不変な末尾の階層だけを

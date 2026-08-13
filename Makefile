@@ -388,7 +388,13 @@ $(DIST_DIR):
 # ===============================================
 
 # 不足しているツールを列挙し、終了コードで返す。
-# scripts/check-env.sh はテンプレート由来の同梱物（正本は ResearchTemplate）。
+# 実体は共通リポジトリ doc-project-common（submodule: scripts/common）。
+# clone に --recursive を付け忘れると未取得になるため、その場合は理由を出す。
 .PHONY: check-env
 check-env:
-	@bash scripts/check-env.sh
+	@if [ ! -f scripts/common/check-env.sh ]; then \
+	  echo "scripts/common が未取得です。次を実行してください:"; \
+	  echo "  git submodule update --init --recursive"; \
+	  exit 1; \
+	fi
+	@bash scripts/common/check-env.sh
